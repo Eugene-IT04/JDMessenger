@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 
 import com.jdcompany.jdmessenger.R;
+import com.jdcompany.jdmessenger.data.InternetService;
+import com.jdcompany.jdmessenger.domain.ChatManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +17,14 @@ public class MainActivity extends AppCompatActivity {
 
     List<String> messages;
     ChatFragment chatFragment;
+    ChatManager chatManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        chatManager = ChatManager.getInstance();
+        InternetService.startService(chatManager::updateMessages);
         if(messages == null) {
             messages = new ArrayList<>();
             messages.add("First");

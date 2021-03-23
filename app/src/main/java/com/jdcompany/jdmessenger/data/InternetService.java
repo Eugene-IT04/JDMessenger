@@ -2,6 +2,8 @@ package com.jdcompany.jdmessenger.data;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,7 +30,7 @@ public class InternetService {
         return internetService;
     }
 
-    public static synchronized void startService(CallBackUpdateMessages callBackUpdateMessages){
+    public static synchronized void startService(@NonNull CallBackUpdateMessages callBackUpdateMessages){
         if(internetService == null) {
             internetService = new InternetService();
             Retrofit retrofit = new Retrofit.Builder()
