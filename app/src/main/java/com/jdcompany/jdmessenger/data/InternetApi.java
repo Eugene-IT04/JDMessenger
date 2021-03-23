@@ -11,7 +11,7 @@ import retrofit2.http.Query;
 public interface InternetApi {
 
     @POST("/api/messages")
-    Call<Object> sendMessage(@Body Message message);
+    Call<CallBackInfo> sendMessage(@Body Message message);
 
     @GET("/api/messages?del=true")
     Call<List<Message>> getMessages(@Query("id") long user_id);

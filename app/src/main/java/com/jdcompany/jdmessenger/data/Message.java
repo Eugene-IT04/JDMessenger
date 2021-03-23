@@ -14,7 +14,6 @@ public class Message {
     @Expose
     private long time;
     @SerializedName("id")
-    @Expose
     private Long id;
     @SerializedName("action")
     @Expose

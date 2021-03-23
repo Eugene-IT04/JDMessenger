@@ -13,14 +13,13 @@ import java.util.List;
 public class Chat implements ChatInterface {
     RecyclerView.Adapter<?> adapter;
     List<Message> messagesList;
-    InternetApi internetApi;
+    InternetService internetService;
     User destination;
-    User currentUser;
+    CallBackUpdate callBackUpdate;
 
     public Chat(User destination){
         this.destination = destination;
-        currentUser = InfoLoader.getInstance().getCurrentUser();
-        internetApi = InternetService.getInternetApi();
+        internetService = InternetService.getInstance();
     }
 
     @Override
@@ -29,17 +28,18 @@ public class Chat implements ChatInterface {
     }
 
     @Override
-    public void setCallBackAdapter(RecyclerView.Adapter<?> adapter) {
-        this.adapter = adapter;
+    public void setCallBackUpdate(CallBackUpdate callBackUpdate) {
+        this.callBackUpdate = callBackUpdate;
     }
 
     @Override
     public void sendTextMessage(String text) {
-
+        messagesList.add(internetService.sendTextMessage(text, destination));
+        callBackUpdate.update();
     }
 
     @Override
     public List<Message> getMessagesList() {
-        return null;
+        return messagesList;
     }
 }
