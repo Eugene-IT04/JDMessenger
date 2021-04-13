@@ -12,9 +12,10 @@
         android:background="#3f83b0"
         app:layout_constraintTop_toTopOf="parent">
         <TextView
+            android:id="@+id/tvChatName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="hello, world!"/>
+            android:textSize="20sp"/>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/bottomPanel"
+        android:fitsSystemWindows="true"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageButton
@@ -54,7 +56,9 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/ibSendButton"
             app:layout_constraintStart_toEndOf="@+id/imageButton"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+            <requestFocus/>
+        </EditText>
 
         <ImageButton
             android:id="@+id/ibSendButton"

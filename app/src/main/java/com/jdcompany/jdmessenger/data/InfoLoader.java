@@ -3,6 +3,7 @@ package com.jdcompany.jdmessenger.data;
 public class InfoLoader {
     private static InfoLoader infoLoader;
     private InfoLoader(){}
+    private User currentUser;
 
     public synchronized static InfoLoader getInstance(){
         if(infoLoader == null){
@@ -11,13 +12,12 @@ public class InfoLoader {
         return infoLoader;
     }
 
+    //FIXME
+    public void setCurrentUser(User user){
+        currentUser = user;
+    }
+
     public User getCurrentUser(){
-        User user = new User();
-        user.setName("Eugene");
-        user.setId(345);
-        user.setPhoto("somePhoto");
-        user.setPublicRsa("public RSA");
-        user.setTag("some tag");
-        return user;
+        return currentUser;
     }
 }

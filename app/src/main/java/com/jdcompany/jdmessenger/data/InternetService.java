@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +20,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class InternetService {
     private InternetApi internetApi;
     private static InternetService internetService;
-    private static String BASE_URL = "http://192.168.3.111:8001";
+    private static String BASE_URL = "http://34.76.56.110:8000";
     private ScheduledExecutorService scheduledExecutorService;
     private CallBackUpdateMessages callBackUpdateMessages;
     private User currentUser;
@@ -46,6 +47,7 @@ public class InternetService {
         else throw new IllegalStateException("InternetService is already running");
     }
 
+    //TODO add encrypting
     public Message sendTextMessage(String text, User destination){
         Message message = new Message();
         message.setBody(text);
@@ -61,11 +63,31 @@ public class InternetService {
             }
 
             @Override
-            public void onFailure(Call<CallBackInfo> call, Throwable t) {
+            public void onFailure(Call<CallBackInfo> call, @NonNull Throwable t) {
                 Log.d("EXCEPTION", t.toString());
             }
         });
         return message;
+    }
+
+    public void tryRegisterUser(User user, @NonNull CallBackRegisterUser callBackRegisterUser){
+        user.setPublicRsa("hui");
+        internetApi.registerUser(user).enqueue(new Callback<CallBackInfo>() {
+            @Override
+            public void onResponse(Call<CallBackInfo> call, Response<CallBackInfo> response) {
+                CallBackInfo callBackInfo = response.body();
+                if(callBackInfo.getStatus().equals("success")) {
+                    user.setId(callBackInfo.getId());
+                    callBackRegisterUser.onUserRegistered(user);
+                }
+                else callBackRegisterUser.onUserTagIsTaken();
+            }
+
+            @Override
+            public void onFailure(Call<CallBackInfo> call, Throwable t) {
+                callBackRegisterUser.onFailure();
+            }
+        });
     }
 
     void updateMessages(){
@@ -76,5 +98,4 @@ public class InternetService {
         }
         catch(Exception e) {}
     }
-
 }

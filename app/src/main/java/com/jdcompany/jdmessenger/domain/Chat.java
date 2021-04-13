@@ -21,6 +21,10 @@ public class Chat implements ChatInterface {
         messagesList = new ArrayList<>();
     }
 
+    public User getDestination(){
+        return destination;
+    }
+
     @Override
     public void tryLoadMessages() {
         //TODO
@@ -33,7 +37,10 @@ public class Chat implements ChatInterface {
 
     @Override
     public void sendTextMessage(String text) {
-        messagesList.add(0, internetService.sendTextMessage(text, destination));
+        internetService = InternetService.getInstance();
+        Message message;
+        message = internetService.sendTextMessage(text, destination);
+        messagesList.add(0, message);
         if(callBackUpdate != null)
         callBackUpdate.update();
     }
@@ -45,18 +52,17 @@ public class Chat implements ChatInterface {
 
     @Override
     public void addMessages(List<Message> messages){
-        messages.addAll(messages);
+        messagesList.addAll(messages);
         sortMessages();
         if(callBackUpdate != null)
             callBackUpdate.update();
     }
 
     private void sortMessages(){
-        Collections.sort(messagesList, new Comparator<Message>() {
-            @Override
-            public int compare(Message o1, Message o2) {
-                return (int)(o1.getTime() - o2.getTime());
-            }
-        });
+        messagesList.sort((o1, o2) -> (int)(o2.getTime() - o1.getTime()));
+    }
+
+    public boolean isLeftSide(Message message){
+        return message.getFromId() == destination.getId();
     }
 }
