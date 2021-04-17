@@ -1,13 +1,11 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -18,14 +16,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.Message;
 import com.jdcompany.jdmessenger.domain.Chat;
-import com.jdcompany.jdmessenger.domain.ChatManager;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,6 +35,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     EditText etMessage;
     ImageButton imageButton;
 
+    public ChatFragment(){
+    }
+
     public ChatFragment(Chat chat){
         this.chat = chat;
     }
@@ -50,22 +48,22 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        TextView tv = view.findViewById(R.id.tvChatName);
-        recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
-        etMessage = view.findViewById(R.id.editText);
-        imageButton = view.findViewById(R.id.ibSendButton);
-
-        tv.setText(chat.getDestination().getName());
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-        linearLayoutManager.setReverseLayout(true);
-        recyclerViewMessages.setLayoutManager(linearLayoutManager);
-        messagesAdapter = new MessagesAdapter(chat);
-        chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
-        recyclerViewMessages.setAdapter(messagesAdapter);
-        imageButton.setOnClickListener(this);
-    }
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        TextView tv = view.findViewById(R.id.tvChatName);
+//        recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
+//        etMessage = view.findViewById(R.id.editText);
+//        imageButton = view.findViewById(R.id.ibSendButton);
+//
+//        tv.setText(chat.getDestination().getName());
+//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+//        linearLayoutManager.setReverseLayout(true);
+//        recyclerViewMessages.setLayoutManager(linearLayoutManager);
+//        messagesAdapter = new MessagesAdapter(chat);
+//        chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
+//        recyclerViewMessages.setAdapter(messagesAdapter);
+//        imageButton.setOnClickListener(this);
+//    }
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -86,7 +84,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    static class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessagesViewHolder>{
+    static class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>{
         List<Message> data;
         Chat chat;
         SimpleDateFormat simpleDateFormat;
@@ -100,13 +98,13 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
         @NonNull
         @Override
-        public MessagesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.message_layout, parent, false);
-            return new MessagesViewHolder(v);
+            return new MessageViewHolder(v);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull MessagesViewHolder holder, int position) {
+        public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
 
             holder.setText(data.get(position).getBody());
             holder.setLeftSide(chat.isLeftSide(data.get(position)));
@@ -119,12 +117,12 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             return data.size();
         }
 
-        static class MessagesViewHolder extends RecyclerView.ViewHolder{
+        static class MessageViewHolder extends RecyclerView.ViewHolder{
             TextView tvMessage;
             TextView tvMessageTime;
             ConstraintLayout clMessageContainer;
 
-            public MessagesViewHolder(@NonNull View itemView) {
+            public MessageViewHolder(@NonNull View itemView) {
                 super(itemView);
                 tvMessage = itemView.findViewById(R.id.tvMessage);
                 tvMessageTime = itemView.findViewById(R.id.tvMessageTime);

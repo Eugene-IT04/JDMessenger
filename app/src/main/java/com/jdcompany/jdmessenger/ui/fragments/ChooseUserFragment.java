@@ -10,6 +10,7 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
@@ -53,11 +54,10 @@ public class ChooseUserFragment extends Fragment implements View.OnClickListener
         }
         if(isDenya){
             InfoLoader.getInstance().setCurrentUser(denya);
-            ((HomeActivity)requireActivity()).choseUserCallBack(eugene);
         }
         else{
             InfoLoader.getInstance().setCurrentUser(eugene);
-            ((HomeActivity)requireActivity()).choseUserCallBack(eugene);
         }
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_chooseUserFragment_to_chatFragment);
     }
 }

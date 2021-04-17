@@ -12,18 +12,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.CallBackRegisterUser;
+import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
 import com.jdcompany.jdmessenger.data.InternetService;
 import com.jdcompany.jdmessenger.data.User;
-import com.jdcompany.jdmessenger.ui.HomeActivity;
 
 public class RegisterUserFragment extends Fragment implements View.OnClickListener, CallBackRegisterUser {
     Button btnSignUp;
     EditText etSignUpName, etSignUpTag;
     Context context;
-    boolean btnSignUpPressed = false;
 
     @Nullable
     @Override
@@ -54,35 +53,39 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
 
     @Override
     public void onClick(View v) {
-        if(!btnSignUpPressed) {
-            if (etSignUpName.getText().toString().isEmpty() || etSignUpTag.getText().toString().isEmpty()) {
-                Toast.makeText(context, "Incorrect name or tag", Toast.LENGTH_SHORT).show();
-            }
-            else {
-                btnSignUpPressed = true;
-                User user = new User();
-                user.setName(etSignUpName.getText().toString());
-                user.setTag(etSignUpTag.getText().toString());
-                InternetService.getInstance().tryRegisterUser(user, this);
-            }
+        if (etSignUpName.getText().toString().isEmpty() || etSignUpTag.getText().toString().isEmpty()) {
+            Toast.makeText(context, "Incorrect name or tag", Toast.LENGTH_SHORT).show();
+        } else {
+            btnSignUp.setEnabled(false);
+            User user = new User();
+            user.setName(etSignUpName.getText().toString());
+            user.setTag(etSignUpTag.getText().toString());
+            InternetService.getInstance().tryRegisterUser(user, this);
         }
+
     }
 
     @Override
     public void onUserRegistered(User user) {
-        btnSignUpPressed = false;
-        ((HomeActivity)requireActivity()).returnRegisteredUser(user);
+        btnSignUp.setEnabled(true);
+        //
+        //add register user
+        //
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_chooseUserFragment);
     }
 
     @Override
     public void onUserTagIsTaken() {
-        btnSignUpPressed = false;
+        btnSignUp.setEnabled(true);
         Toast.makeText(context, "Tag is already taken", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onFailure() {
-        btnSignUpPressed = false;
+        btnSignUp.setEnabled(true);
         Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
+
+
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_chooseUserFragment);
     }
 }

@@ -12,7 +12,6 @@ public class InfoLoader {
         return infoLoader;
     }
 
-    //FIXME
     public void setCurrentUser(User user){
         currentUser = user;
     }

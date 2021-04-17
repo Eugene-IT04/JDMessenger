@@ -1,4 +1,6 @@
-package com.jdcompany.jdmessenger.data;
+package com.jdcompany.jdmessenger.data.callbacks;
+
+import com.jdcompany.jdmessenger.data.User;
 
 public interface CallBackRegisterUser {
     void onUserRegistered(User user);

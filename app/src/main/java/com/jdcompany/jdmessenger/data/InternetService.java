@@ -4,9 +4,12 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
+import com.jdcompany.jdmessenger.data.callbacks.CallBackInfo;
+import com.jdcompany.jdmessenger.data.callbacks.CallBackMessagesReceived;
+import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
+
+import java.io.InterruptedIOException;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -16,13 +19,17 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Query;
 
 public class InternetService {
     private InternetApi internetApi;
     private static InternetService internetService;
     private static String BASE_URL = "http://34.76.56.110:8000";
     private ScheduledExecutorService scheduledExecutorService;
-    private CallBackUpdateMessages callBackUpdateMessages;
+    private CallBackMessagesReceived callBackMessagesReceived;
     private User currentUser;
 
     private InternetService(){}
@@ -31,7 +38,7 @@ public class InternetService {
         return internetService;
     }
 
-    public static synchronized void startService(@NonNull CallBackUpdateMessages callBackUpdateMessages){
+    public static synchronized void startService(@NonNull CallBackMessagesReceived callBackMessagesReceived){
         if(internetService == null) {
             internetService = new InternetService();
             Retrofit retrofit = new Retrofit.Builder()
@@ -42,7 +49,7 @@ public class InternetService {
             internetService.currentUser = InfoLoader.getInstance().getCurrentUser();
             internetService.scheduledExecutorService = Executors.newScheduledThreadPool(1);
             internetService.scheduledExecutorService.scheduleWithFixedDelay(internetService::updateMessages, 0, 1, TimeUnit.SECONDS);
-            internetService.callBackUpdateMessages = callBackUpdateMessages;
+            internetService.callBackMessagesReceived = callBackMessagesReceived;
         }
         else throw new IllegalStateException("InternetService is already running");
     }
@@ -94,8 +101,20 @@ public class InternetService {
         try {
             Response<List<Message>> response = internetApi.getMessages(currentUser.getId()).execute();
             List<Message> messages = response.body();
-            if(messages != null && messages.size() > 0) callBackUpdateMessages.updateMessages(messages);
+            if(messages != null && messages.size() > 0) callBackMessagesReceived.updateMessages(messages);
         }
         catch(Exception e) {}
+    }
+
+    private interface InternetApi {
+
+        @POST("/api/messages")
+        Call<CallBackInfo> sendMessage(@Body Message message);
+
+        @GET("/api/messages?del=true")
+        Call<List<Message>> getMessages(@Query("id") long user_id);
+
+        @POST("api/users")
+        Call<CallBackInfo> registerUser(@Body User user);
     }
 }
