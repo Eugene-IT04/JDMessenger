@@ -71,7 +71,7 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
         //
         //add register user
         //
-        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_chooseUserFragment);
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
         btnSignUp.setEnabled(true);
         Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
 
-
-        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_chooseUserFragment);
+        //TODO delete this:
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
     }
 }

@@ -1,17 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto" android:id="@+id/nav_graph"
-    app:startDestination="@id/chooseUserFragment">
+    app:startDestination="@id/mainScreenFragment">
 
-    <fragment
-        android:id="@+id/chooseUserFragment"
-        android:name="com.jdcompany.jdmessenger.ui.fragments.ChooseUserFragment"
-        android:label="ChooseUserFragment" >
-        <action
-            android:id="@+id/action_chooseUserFragment_to_chatFragment"
-            app:destination="@id/chatFragment"
-            app:enterAnim="@android:anim/fade_in" />
-    </fragment>
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.jdcompany.jdmessenger.ui.fragments.ChatFragment"
@@ -21,9 +12,17 @@
         android:name="com.jdcompany.jdmessenger.ui.fragments.RegisterUserFragment"
         android:label="RegisterUserFragment">
         <action
-            android:id="@+id/action_registerUserFragment_to_chooseUserFragment"
+            android:id="@+id/action_registerUserFragment_to_mainScreenFragment"
             app:popUpTo="@id/registerUserFragment"
             app:popUpToInclusive="true"
-            app:destination="@id/chooseUserFragment" />
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainScreenFragment"
+        android:name="com.jdcompany.jdmessenger.ui.fragments.MainScreenFragment"
+        android:label="MainScreenFragment" >
+        <action
+            android:id="@+id/action_mainScreenFragment_to_chatFragment"
+            app:destination="@id/chatFragment" />
     </fragment>
 </navigation>

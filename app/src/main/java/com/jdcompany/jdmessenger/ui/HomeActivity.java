@@ -37,11 +37,11 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("MYLOG", "onCreate");
         InternetService.startService(null);
 
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);  // Hostfragment
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavInflater inflater = navHostFragment.getNavController().getNavInflater();
         NavGraph graph = inflater.inflate(R.navigation.nav_graph);
         if(!readDataForInfoLoader()) graph.setStartDestination(R.id.registerUserFragment);
-        else graph.setStartDestination(R.id.chooseUserFragment);
+        else graph.setStartDestination(R.id.mainScreenFragment);
         navHostFragment.getNavController().setGraph(graph);
     }
 

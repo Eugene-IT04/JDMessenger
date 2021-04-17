@@ -58,6 +58,6 @@ public class ChooseUserFragment extends Fragment implements View.OnClickListener
         else{
             InfoLoader.getInstance().setCurrentUser(eugene);
         }
-        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_chooseUserFragment_to_chatFragment);
+        //Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_chooseUserFragment_to_chatFragment);
     }
 }
