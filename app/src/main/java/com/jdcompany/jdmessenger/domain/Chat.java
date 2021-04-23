@@ -15,13 +15,13 @@ public class Chat implements ChatInterface {
     User destination;
     CallBackUpdate callBackUpdate;
 
-    public Chat(User destination){
+    public Chat(User destination) {
         this.destination = destination;
         internetService = InternetService.getInstance();
         messagesList = new ArrayList<>();
     }
 
-    public User getDestination(){
+    public User getDestination() {
         return destination;
     }
 
@@ -41,8 +41,8 @@ public class Chat implements ChatInterface {
         Message message;
         message = internetService.sendTextMessage(text, destination);
         messagesList.add(0, message);
-        if(callBackUpdate != null)
-        callBackUpdate.update();
+        if (callBackUpdate != null)
+            callBackUpdate.update();
     }
 
     @Override
@@ -51,18 +51,18 @@ public class Chat implements ChatInterface {
     }
 
     @Override
-    public void addMessages(List<Message> messages){
+    public void addMessages(List<Message> messages) {
         messagesList.addAll(messages);
         sortMessages();
-        if(callBackUpdate != null)
+        if (callBackUpdate != null)
             callBackUpdate.update();
     }
 
-    private void sortMessages(){
-        messagesList.sort((o1, o2) -> (int)(o2.getTime() - o1.getTime()));
+    private void sortMessages() {
+        messagesList.sort((o1, o2) -> (int) (o2.getTime() - o1.getTime()));
     }
 
-    public boolean isLeftSide(Message message){
+    public boolean isLeftSide(Message message) {
         return message.getFromId() == destination.getId();
     }
 }

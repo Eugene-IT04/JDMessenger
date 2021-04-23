@@ -15,9 +15,13 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
+import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
 import com.jdcompany.jdmessenger.data.InternetService;
 import com.jdcompany.jdmessenger.data.User;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
 
 public class RegisterUserFragment extends Fragment implements View.OnClickListener, CallBackRegisterUser {
     Button btnSignUp;
@@ -68,9 +72,8 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
     @Override
     public void onUserRegistered(User user) {
         btnSignUp.setEnabled(true);
-        //
-        //add register user
-        //
+        InfoLoader.getInstance().setCurrentUser(user);
+        saveUserDataForInfoLoader(user);
         Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
     }
 
@@ -87,5 +90,17 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
 
         //TODO delete this:
         Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
+    }
+
+    private void saveUserDataForInfoLoader(User user) {
+        try {
+            FileOutputStream fos = context.openFileOutput(InfoLoader.USER_DATA_FILE_NAME, Context.MODE_PRIVATE);
+            ObjectOutputStream os = new ObjectOutputStream(fos);
+            os.writeObject(user);
+            os.close();
+            fos.close();
+        } catch (Exception e) {
+            Toast.makeText(context, "Failed to save data", Toast.LENGTH_SHORT).show();
+        }
     }
 }

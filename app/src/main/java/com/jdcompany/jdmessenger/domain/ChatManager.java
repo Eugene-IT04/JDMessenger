@@ -10,11 +10,12 @@ public class ChatManager {
     private static ChatManager chatManager;
     private List<Chat> chatList;
 
-    private ChatManager(){}
+    private ChatManager() {
+    }
 
     //FIXME
-    public static synchronized ChatManager getInstance(User destination){
-        if(chatManager == null){
+    public static synchronized ChatManager getInstance(User destination) {
+        if (chatManager == null) {
             chatManager = new ChatManager();
             chatManager.chatList = new ArrayList<>();
             chatManager.chatList.add(new Chat(destination));
@@ -22,12 +23,12 @@ public class ChatManager {
         return chatManager;
     }
 
-    public void updateMessages(List<Message> messageList){
+    public void updateMessages(List<Message> messageList) {
         //FIXME
         chatList.get(0).addMessages(messageList);
     }
 
-    public List<Chat> getChatList(){
+    public List<Chat> getChatList() {
         return chatList;
     }
 }

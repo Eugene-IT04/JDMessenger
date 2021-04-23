@@ -22,7 +22,7 @@ public class Message {
     @SerializedName("body")
     @Expose
     private String body;
-    
+
     public long getFromId() {
         return fromId;
     }

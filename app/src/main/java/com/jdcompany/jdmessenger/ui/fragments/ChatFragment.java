@@ -35,10 +35,10 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     EditText etMessage;
     ImageButton imageButton;
 
-    public ChatFragment(){
+    public ChatFragment() {
     }
 
-    public ChatFragment(Chat chat){
+    public ChatFragment(Chat chat) {
         this.chat = chat;
     }
 
@@ -79,17 +79,17 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String string = etMessage.getText().toString();
-            chat.sendTextMessage(string);
-            etMessage.setText("");
+        chat.sendTextMessage(string);
+        etMessage.setText("");
 
     }
 
-    static class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder>{
+    static class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
         List<Message> data;
         Chat chat;
         SimpleDateFormat simpleDateFormat;
 
-        public MessagesAdapter(Chat chat){
+        public MessagesAdapter(Chat chat) {
             super();
             this.chat = chat;
             data = chat.getMessagesList();
@@ -117,7 +117,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
             return data.size();
         }
 
-        static class MessageViewHolder extends RecyclerView.ViewHolder{
+        static class MessageViewHolder extends RecyclerView.ViewHolder {
             TextView tvMessage;
             TextView tvMessageTime;
             ConstraintLayout clMessageContainer;
@@ -129,18 +129,17 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                 clMessageContainer = itemView.findViewById(R.id.flMessageContainer);
             }
 
-            void setText(String text){
+            void setText(String text) {
                 tvMessage.setText(text);
             }
 
-            void setLeftSide(boolean side){
+            void setLeftSide(boolean side) {
                 FrameLayout.LayoutParams frameLaoutParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
-                if(side) {
+                if (side) {
                     frameLaoutParams.gravity = Gravity.LEFT;
                     clMessageContainer.setBackgroundResource(R.drawable.message_left_drawable);
                     frameLaoutParams.leftMargin = 20;
-                }
-                else{
+                } else {
                     frameLaoutParams.gravity = Gravity.RIGHT;
                     clMessageContainer.setBackgroundResource(R.drawable.message_right_drawable);
                     frameLaoutParams.rightMargin = 20;

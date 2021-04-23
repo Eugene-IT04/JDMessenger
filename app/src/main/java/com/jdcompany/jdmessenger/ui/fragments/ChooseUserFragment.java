@@ -1,6 +1,5 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +9,10 @@ import android.widget.Button;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.User;
-import com.jdcompany.jdmessenger.ui.HomeActivity;
 
 public class ChooseUserFragment extends Fragment implements View.OnClickListener {
     Button btnEugene, btnDenya;
@@ -44,7 +41,7 @@ public class ChooseUserFragment extends Fragment implements View.OnClickListener
         denya.setName("Denya");
         denya.setId(10);
         boolean isDenya = false;
-        switch(v.getId()){
+        switch (v.getId()) {
             case R.id.btnDenya:
                 isDenya = true;
                 break;
@@ -52,10 +49,9 @@ public class ChooseUserFragment extends Fragment implements View.OnClickListener
                 isDenya = false;
                 break;
         }
-        if(isDenya){
+        if (isDenya) {
             InfoLoader.getInstance().setCurrentUser(denya);
-        }
-        else{
+        } else {
             InfoLoader.getInstance().setCurrentUser(eugene);
         }
         //Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_chooseUserFragment_to_chatFragment);

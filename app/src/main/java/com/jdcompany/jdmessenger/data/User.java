@@ -1,9 +1,14 @@
 package com.jdcompany.jdmessenger.data;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "users")
 public class User {
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private long id;
