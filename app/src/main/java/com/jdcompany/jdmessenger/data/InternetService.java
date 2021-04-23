@@ -4,9 +4,11 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackInfo;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackMessagesReceived;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
+import com.jdcompany.jdmessenger.domain.CallBackUpdate;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -25,7 +27,7 @@ import retrofit2.http.Query;
 
 public class InternetService {
     private static InternetService internetService;
-    private static String BASE_URL = "http://34.76.56.110:8000";
+    private static String BASE_URL = "http://34.77.194.238:8000";
 
     private InternetApi internetApi;
     private ScheduledExecutorService scheduledExecutorService;
@@ -99,6 +101,40 @@ public class InternetService {
         });
     }
 
+    public void findUser(String tag, CallBackFindUser callBackFindUser){
+        internetApi.getUserByTag(tag).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                Object callBackObject = response.body();
+                if(callBackObject instanceof User)
+                    callBackFindUser.onUserFound((User)callBackObject);
+                else callBackFindUser.onUserDoesNotExist();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                callBackFindUser.onFailure();
+            }
+        });
+    }
+
+    public void findUser(long id, CallBackFindUser callBackFindUser){
+        internetApi.getUserById(id).enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                Object callBackObject = response.body();
+                if(callBackObject instanceof User)
+                    callBackFindUser.onUserFound((User)callBackFindUser);
+                else callBackFindUser.onUserDoesNotExist();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                callBackFindUser.onFailure();
+            }
+        });
+    }
+
     void updateMessages() {
         try {
             Response<List<Message>> response = internetApi.getMessages(infoLoader.getId()).execute();
@@ -119,5 +155,11 @@ public class InternetService {
 
         @POST("api/users")
         Call<CallBackInfo> registerUser(@Body User user);
+
+        @GET("/api/users")
+        Call<User> getUserById(@Query("id") long id);
+
+        @GET("/api/users")
+        Call<User> getUserByTag(@Query("tag") String tag);
     }
 }

@@ -2,11 +2,11 @@ package com.jdcompany.jdmessenger.data.callbacks;
 
 import com.jdcompany.jdmessenger.data.User;
 
-public interface CallBackRegisterUser {
+public interface CallBackFindUser {
 
-    void onUserRegistered(User user);
+    void onUserFound(User user);
 
-    void onUserTagIsTaken();
+    void onUserDoesNotExist();
 
     void onFailure();
 }

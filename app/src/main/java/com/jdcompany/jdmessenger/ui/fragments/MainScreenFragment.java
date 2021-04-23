@@ -4,12 +4,14 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -17,9 +19,12 @@ import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainScreenFragment extends Fragment {
+public class MainScreenFragment extends Fragment implements View.OnClickListener {
+
+    Button btnFindNewUser;
 
     @Nullable
     @Override
@@ -33,13 +38,22 @@ public class MainScreenFragment extends Fragment {
         RecyclerView recyclerView = view.findViewById(R.id.rvUsers);
         recyclerView.setAdapter(new UsersAdapter());
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        btnFindNewUser = view.findViewById(R.id.btnFindNewUser);
+        btnFindNewUser.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_findUserFragment);
     }
 
     static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
         List<User> data;
 
         public UsersAdapter(){
-            data = InfoLoader.getInstance().getAllUsers();
+            data = new ArrayList<>();
+            //data = InfoLoader.getInstance().getAllUsers();
         }
 
         @NonNull
