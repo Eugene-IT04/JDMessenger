@@ -1,24 +1,35 @@
 package com.jdcompany.jdmessenger.data;
 
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "messages")
 public class Message {
+
     @SerializedName("fromId")
     @Expose
     private long fromId;
+
     @SerializedName("toId")
     @Expose
     private long toId;
+
     @SerializedName("time")
     @Expose
     private long time;
+
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     private Long id;
+
     @SerializedName("action")
     @Expose
     private String action;
+
     @SerializedName("body")
     @Expose
     private String body;

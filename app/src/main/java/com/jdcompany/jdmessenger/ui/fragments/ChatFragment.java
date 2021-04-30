@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
@@ -36,9 +37,6 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     EditText etMessage;
     ImageButton imageButton;
 
-    public ChatFragment() {
-    }
-
     public ChatFragment(Chat chat) {
         this.chat = chat;
     }
@@ -49,22 +47,22 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         return inflater.inflate(R.layout.fragment_chat, container, false);
     }
 
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        TextView tv = view.findViewById(R.id.tvChatName);
-//        recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
-//        etMessage = view.findViewById(R.id.editText);
-//        imageButton = view.findViewById(R.id.ibSendButton);
-//
-//        tv.setText(chat.getDestination().getName());
-//        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-//        linearLayoutManager.setReverseLayout(true);
-//        recyclerViewMessages.setLayoutManager(linearLayoutManager);
-//        messagesAdapter = new MessagesAdapter(chat);
-//        chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
-//        recyclerViewMessages.setAdapter(messagesAdapter);
-//        imageButton.setOnClickListener(this);
-//    }
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        TextView tv = view.findViewById(R.id.tvChatName);
+        recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
+        etMessage = view.findViewById(R.id.editText);
+        imageButton = view.findViewById(R.id.ibSendButton);
+
+        tv.setText(chat.getDestination().getName());
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+        linearLayoutManager.setReverseLayout(true);
+        recyclerViewMessages.setLayoutManager(linearLayoutManager);
+        messagesAdapter = new MessagesAdapter(chat);
+        chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
+        recyclerViewMessages.setAdapter(messagesAdapter);
+        imageButton.setOnClickListener(this);
+    }
 
     @Override
     public void onAttach(@NonNull Context context) {

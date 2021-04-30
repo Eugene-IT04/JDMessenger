@@ -13,11 +13,14 @@ import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.InternetService;
 import com.jdcompany.jdmessenger.data.User;
 import com.jdcompany.jdmessenger.database.AppDatabase;
+import com.jdcompany.jdmessenger.database.MessageDao;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 
 public class HomeActivity extends AppCompatActivity {
+
+    MessageDao messageDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,8 +28,9 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         Log.d("MYLOG", "onCreate");
 
-        InfoLoader.InitInfoLoader(AppDatabase.getInstance(getApplicationContext()));
-        InternetService.startService(null);
+        messageDao = AppDatabase.getInstance(this).messageDao();
+
+        InternetService.startService(messages -> messageDao.insert(messages).subscribe());
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavInflater inflater = navHostFragment.getNavController().getNavInflater();

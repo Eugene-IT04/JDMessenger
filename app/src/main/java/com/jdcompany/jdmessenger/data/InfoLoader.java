@@ -12,21 +12,12 @@ public class InfoLoader {
     private static InfoLoader infoLoader;
 
     private User currentUser;
-    private AppDatabase appDatabase;
-    private UserDao userDao;
 
-    private InfoLoader(AppDatabase appDatabase){
-        this.appDatabase = appDatabase;
-        this.userDao = appDatabase.userDao();
-    }
+    private InfoLoader(){}
 
-    public static void InitInfoLoader(AppDatabase appDatabase){
-        infoLoader = new InfoLoader(appDatabase);
-    }
-
-    public static InfoLoader getInstance(){
+    public static synchronized InfoLoader getInstance(){
         if(infoLoader == null){
-            throw new IllegalStateException("InfoLoader is not initialized");
+            infoLoader = new InfoLoader();
         }
         return infoLoader;
     }
@@ -39,15 +30,4 @@ public class InfoLoader {
         return currentUser;
     }
 
-    public Flowable<List<User>> getAllUsers(){
-        return userDao.getAll();
-    }
-
-    public void addUser(User user){
-        userDao.insert(user);
-    }
-
-    public void deleteUser(User user){
-        userDao.delete(user);
-    }
 }
