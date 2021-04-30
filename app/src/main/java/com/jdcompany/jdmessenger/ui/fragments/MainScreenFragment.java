@@ -1,7 +1,9 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
 import android.os.Bundle;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,13 +20,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.database.AppDatabase;
+import com.jdcompany.jdmessenger.database.UserDao;
+import com.jdcompany.jdmessenger.ui.adapters.UsersAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
+
 public class MainScreenFragment extends Fragment implements View.OnClickListener {
 
     Button btnFindNewUser;
+    CompositeDisposable compositeDisposable;
+    UsersAdapter usersAdapter = new UsersAdapter();
+    UserDao userDao;
 
     @Nullable
     @Override
@@ -36,11 +48,30 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         RecyclerView recyclerView = view.findViewById(R.id.rvUsers);
-        recyclerView.setAdapter(new UsersAdapter());
+        recyclerView.setAdapter(usersAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        registerForContextMenu(recyclerView);
 
         btnFindNewUser = view.findViewById(R.id.btnFindNewUser);
         btnFindNewUser.setOnClickListener(this);
+
+        userDao = AppDatabase.getInstance(getContext()).userDao();
+
+        compositeDisposable = new CompositeDisposable();
+        createObserver();
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position = usersAdapter.getPosition();
+        switch (item.getItemId()){
+            case R.id.optionDeleteUser:
+                userDao.delete(usersAdapter.getData().get(position))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+        }
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -48,44 +79,16 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_findUserFragment);
     }
 
-    static class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
-        List<User> data;
-
-        public UsersAdapter(){
-            data = new ArrayList<>();
-            //data = InfoLoader.getInstance().getAllUsers();
-        }
-
-        @NonNull
-        @Override
-        public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.user_layout, parent, false);
-            return new UserViewHolder(v);
-        }
-
-        @Override
-        public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-            holder.tvUserName.setText(data.get(position).getName());
-        }
-
-        @Override
-        public int getItemCount() {
-            return data.size();
-        }
-
-        static class UserViewHolder extends RecyclerView.ViewHolder {
-
-            ImageView ivUserPicture;
-            TextView tvUserName;
-            TextView tvLastMessage;
-
-            public UserViewHolder(@NonNull View itemView) {
-                super(itemView);
-                ivUserPicture = itemView.findViewById(R.id.ivUserPicture);
-                tvUserName = itemView.findViewById(R.id.tvUserName);
-                tvLastMessage = itemView.findViewById(R.id.tvLastMessage);
-            }
-        }
+    void createObserver(){
+        compositeDisposable.add(userDao
+                .getAll()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(list -> usersAdapter.updateData(list), e -> {}));
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.dispose();
+    }
 }

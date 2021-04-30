@@ -5,6 +5,8 @@ import com.jdcompany.jdmessenger.database.UserDao;
 
 import java.util.List;
 
+import io.reactivex.Flowable;
+
 public class InfoLoader {
     public static String USER_DATA_FILE_NAME = "currentUser";
     private static InfoLoader infoLoader;
@@ -37,7 +39,7 @@ public class InfoLoader {
         return currentUser;
     }
 
-    public List<User> getAllUsers(){
+    public Flowable<List<User>> getAllUsers(){
         return userDao.getAll();
     }
 

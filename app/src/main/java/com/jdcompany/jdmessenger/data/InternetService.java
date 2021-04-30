@@ -27,7 +27,7 @@ import retrofit2.http.Query;
 
 public class InternetService {
     private static InternetService internetService;
-    private static String BASE_URL = "http://34.77.194.238:8000";
+    private static String BASE_URL = "http://34.77.103.22:8000";
 
     private InternetApi internetApi;
     private ScheduledExecutorService scheduledExecutorService;

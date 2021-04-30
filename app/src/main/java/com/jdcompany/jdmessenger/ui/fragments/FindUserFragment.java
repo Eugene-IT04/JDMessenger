@@ -19,6 +19,10 @@ import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.InternetService;
 import com.jdcompany.jdmessenger.data.User;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
+import com.jdcompany.jdmessenger.database.AppDatabase;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class FindUserFragment extends Fragment implements View.OnClickListener {
 
@@ -60,8 +64,12 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
             InternetService.getInstance().findUser(etFindUserTag.getText().toString(), new CallBackFindUser() {
                 @Override
                 public void onUserFound(User user) {
-                    InfoLoader.getInstance().addUser(user);
-                    Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();
+                    AppDatabase.getInstance(getContext()).userDao().insert(user)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() ->
+                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack(),
+                            e-> {Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();});
                 }
 
                 @Override

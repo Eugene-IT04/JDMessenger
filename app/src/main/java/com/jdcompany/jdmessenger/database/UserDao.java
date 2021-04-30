@@ -9,16 +9,19 @@ import com.jdcompany.jdmessenger.data.User;
 
 import java.util.List;
 
+import io.reactivex.Completable;
+import io.reactivex.Flowable;
+
 @Dao
 public interface UserDao {
 
     @Query("SELECT * FROM users")
-    List<User> getAll();
+    Flowable<List<User>> getAll();
 
     @Insert
-    void insert(User user);
+    Completable insert(User user);
 
     @Delete
-    void delete(User user);
+    Completable delete(User user);
 
 }
