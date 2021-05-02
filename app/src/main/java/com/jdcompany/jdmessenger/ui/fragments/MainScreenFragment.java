@@ -1,14 +1,11 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -18,14 +15,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.InfoLoader;
-import com.jdcompany.jdmessenger.data.User;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 import com.jdcompany.jdmessenger.database.UserDao;
 import com.jdcompany.jdmessenger.ui.adapters.UsersAdapter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -60,6 +52,12 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         compositeDisposable = new CompositeDisposable();
         createObserver();
 
+        usersAdapter.setOnItemClickListener(userModel -> {
+            Bundle bundle = new Bundle();
+            bundle.putLong("userId", userModel.getId());
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_chatFragment, bundle);
+        });
+
     }
 
     @Override
@@ -83,7 +81,7 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         compositeDisposable.add(userDao
                 .getAll()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> usersAdapter.updateData(list), e -> {}));
+                .subscribe(list -> usersAdapter.setUsersCollection(list), e -> {}));
     }
 
     @Override

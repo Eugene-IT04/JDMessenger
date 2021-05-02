@@ -12,12 +12,16 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
+import io.reactivex.Maybe;
 
 @Dao
 public interface MessageDao {
 
     @Query("SELECT * FROM messages WHERE fromId + toId = :key ORDER BY time")
     Flowable<List<Message>> getAllForKey(long key);
+
+//    @Query("SELECT MAX(time) FROM messages WHERE fromId + toId = :key")
+//    Maybe<Message> getLastMessageByKey(long key);
 
     @Insert
     Completable insert(Message message);

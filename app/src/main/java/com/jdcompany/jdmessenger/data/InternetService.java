@@ -8,6 +8,7 @@ import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackInfo;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackMessagesReceived;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
+import com.jdcompany.jdmessenger.data.callbacks.CallBackSendMessage;
 import com.jdcompany.jdmessenger.domain.CallBackUpdate;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Completable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,27 +61,22 @@ public class InternetService {
         }
     }
 
-    //TODO add encrypting
-    public Message sendTextMessage(String text, User destination) {
-        Message message = new Message();
-        message.setBody(text);
-        message.setTime(System.currentTimeMillis());
-        message.setFromId(infoLoader.getId());
-        message.setAction("text");
-        message.setToId(destination.getId());
+
+    public void sendMessage(Message message, @NonNull CallBackSendMessage callBackSendMessage){
         internetApi.sendMessage(message).enqueue(new Callback<CallBackInfo>() {
             @Override
             public void onResponse(Call<CallBackInfo> call, Response<CallBackInfo> response) {
-                if (response.body() != null)
-                    message.setId(response.body().getId());
+                CallBackInfo callBackInfo = response.body();
+                message.setId(callBackInfo.getId());
+                message.setTime(callBackInfo.getTime());
+                callBackSendMessage.onMessageSent(message);
             }
 
             @Override
-            public void onFailure(Call<CallBackInfo> call, @NonNull Throwable t) {
-                Log.d("EXCEPTION", t.toString());
+            public void onFailure(Call<CallBackInfo> call, Throwable t) {
+                callBackSendMessage.onFailure();
             }
         });
-        return message;
     }
 
     public void tryRegisterUser(User user, @NonNull CallBackRegisterUser callBackRegisterUser) {
@@ -101,7 +98,7 @@ public class InternetService {
         });
     }
 
-    public void findUser(String tag, CallBackFindUser callBackFindUser){
+    public void findUser(String tag, @NonNull CallBackFindUser callBackFindUser){
         internetApi.getUserByTag(tag).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
@@ -118,7 +115,7 @@ public class InternetService {
         });
     }
 
-    public void findUser(long id, CallBackFindUser callBackFindUser){
+    public void findUser(long id, @NonNull CallBackFindUser callBackFindUser){
         internetApi.getUserById(id).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

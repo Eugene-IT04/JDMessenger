@@ -21,12 +21,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.Message;
+import com.jdcompany.jdmessenger.database.AppDatabase;
+import com.jdcompany.jdmessenger.database.MessageDao;
+import com.jdcompany.jdmessenger.database.UserDao;
 import com.jdcompany.jdmessenger.domain.Chat;
 import com.jdcompany.jdmessenger.ui.adapters.MessagesAdapter;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class ChatFragment extends Fragment implements View.OnClickListener {
 
@@ -36,10 +42,9 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     Context context;
     EditText etMessage;
     ImageButton imageButton;
+    MessageDao messageDao;
+    UserDao userDao;
 
-    public ChatFragment(Chat chat) {
-        this.chat = chat;
-    }
 
     @Nullable
     @Override
@@ -53,13 +58,24 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
         etMessage = view.findViewById(R.id.editText);
         imageButton = view.findViewById(R.id.ibSendButton);
+        imageButton.setEnabled(false);
+        userDao = AppDatabase.getInstance(getContext()).userDao();
+        messageDao = AppDatabase.getInstance(getContext()).messageDao();
 
-        tv.setText(chat.getDestination().getName());
+        userDao.getUserById(getArguments().getLong("userId"))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(user -> {
+                    chat = new Chat(user, messageDao);
+                    imageButton.setEnabled(true);
+                    tv.setText(chat.getDestination().getName());
+                });
+
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         linearLayoutManager.setReverseLayout(true);
         recyclerViewMessages.setLayoutManager(linearLayoutManager);
         messagesAdapter = new MessagesAdapter(chat);
-        chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
+        //chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
         recyclerViewMessages.setAdapter(messagesAdapter);
         imageButton.setOnClickListener(this);
     }

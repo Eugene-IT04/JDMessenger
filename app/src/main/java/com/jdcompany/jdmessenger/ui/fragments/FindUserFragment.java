@@ -69,7 +69,10 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(() ->
                             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack(),
-                            e-> {Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();});
+                            e-> {
+                                Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                btnFindUser.setEnabled(true);
+                            });
                 }
 
                 @Override

@@ -18,6 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
+
+    public interface OnItemClickListener {
+        void onUserItemClicked(User userModel);
+    }
+
+    private OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener (OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
     List<User> data;
     private int position;
 
@@ -37,9 +48,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         data = new ArrayList<>();
     }
 
-    public void updateData(List<User> data){
-        this.data.clear();
-        this.data.addAll(data);
+    public void setUsersCollection(List<User> data){
+        this.data = data;;
         notifyDataSetChanged();
     }
 
@@ -57,6 +67,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             setPosition(holder.getAdapterPosition());
             return false;
         });
+        holder.itemView.setOnClickListener(v -> {
+            if (UsersAdapter.this.onItemClickListener != null)
+                UsersAdapter.this.onItemClickListener.onUserItemClicked(data.get(position));
+        });
+
     }
 
     @Override

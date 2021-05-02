@@ -23,7 +23,7 @@
         android:label="MainScreenFragment" >
         <action
             android:id="@+id/action_mainScreenFragment_to_chatFragment"
-            app:destination="@id/chatFragment" />
+            app:destination="@id/chatFragment"/>
         <action
             android:id="@+id/action_mainScreenFragment_to_findUserFragment"
             app:destination="@id/findUserFragment" />

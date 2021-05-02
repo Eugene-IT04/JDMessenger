@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_"
         android:inputType="textFilter"
+        android:layout_marginLeft="10dp"
         android:hint="Tag"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toLeftOf="@id/btnFindUser"

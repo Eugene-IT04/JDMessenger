@@ -1,68 +1,64 @@
 package com.jdcompany.jdmessenger.domain;
 
+import android.icu.text.IDNA;
+
+import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.InternetService;
 import com.jdcompany.jdmessenger.data.Message;
 import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.callbacks.CallBackSendMessage;
+import com.jdcompany.jdmessenger.database.AppDatabase;
+import com.jdcompany.jdmessenger.database.MessageDao;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class Chat implements ChatInterface {
+import io.reactivex.schedulers.Schedulers;
+
+public class Chat {
+
     List<Message> messagesList;
     InternetService internetService;
     User destination;
-    CallBackUpdate callBackUpdate;
+    MessageDao messageDao;
 
-    public Chat(User destination) {
+    public Chat(User destination, MessageDao messageDao) {
         this.destination = destination;
         internetService = InternetService.getInstance();
-        messagesList = new ArrayList<>();
+        this.messageDao = messageDao;
     }
 
     public User getDestination() {
         return destination;
     }
 
-    @Override
-    public void tryLoadMessages() {
-        //TODO
-    }
-
-    @Override
-    public void setCallBackUpdate(CallBackUpdate callBackUpdate) {
-        this.callBackUpdate = callBackUpdate;
-    }
-
-    @Override
     public void sendTextMessage(String text) {
         internetService = InternetService.getInstance();
-        Message message;
-        message = internetService.sendTextMessage(text, destination);
-        messagesList.add(0, message);
-        if (callBackUpdate != null)
-            callBackUpdate.update();
-    }
+        Message message = new Message();
+        message.setFromId(InfoLoader.getInstance().getCurrentUser().getId());
+        message.setToId(destination.getId());
+        message.setAction("text");
+        message.setBody(text);
+        internetService.sendMessage(message, new CallBackSendMessage() {
+            @Override
+            public void onMessageSent(Message message) {
+                messageDao.insert(message)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+            }
 
-    @Override
-    public List<Message> getMessagesList() {
-        return messagesList;
-    }
+            @Override
+            public void onFailure() {
 
-    @Override
-    public void addMessages(List<Message> messages) {
-        messagesList.addAll(messages);
-        sortMessages();
-        if (callBackUpdate != null)
-            callBackUpdate.update();
-    }
-
-    private void sortMessages() {
-        messagesList.sort((o1, o2) -> (int) (o2.getTime() - o1.getTime()));
+            }
+        });
     }
 
     public boolean isLeftSide(Message message) {
         return message.getFromId() == destination.getId();
     }
+
+
 }

@@ -7,9 +7,18 @@ public class CallBackInfo {
     @SerializedName("status")
     @Expose
     private String status;
+
     @SerializedName("id")
     @Expose
     private long id;
+
+    @SerializedName("time")
+    @Expose
+    private long time;
+
+    public long getTime() { return time; }
+
+    public void setTime(long time) { this.time = time; }
 
     public long getId() {
         return id;

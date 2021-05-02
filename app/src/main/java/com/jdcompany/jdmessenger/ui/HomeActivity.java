@@ -14,6 +14,8 @@ import com.jdcompany.jdmessenger.data.InternetService;
 import com.jdcompany.jdmessenger.data.User;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 import com.jdcompany.jdmessenger.database.MessageDao;
+import com.jdcompany.jdmessenger.database.UserDao;
+import com.jdcompany.jdmessenger.domain.IncomeMessagesHandler;
 
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
@@ -21,6 +23,8 @@ import java.io.ObjectInputStream;
 public class HomeActivity extends AppCompatActivity {
 
     MessageDao messageDao;
+    UserDao userDao;
+    IncomeMessagesHandler incomeMessagesHandler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +33,10 @@ public class HomeActivity extends AppCompatActivity {
         Log.d("MYLOG", "onCreate");
 
         messageDao = AppDatabase.getInstance(this).messageDao();
+        userDao = AppDatabase.getInstance(this).userDao();
+        incomeMessagesHandler = new IncomeMessagesHandler(userDao, messageDao);
 
-        InternetService.startService(messages -> messageDao.insert(messages).subscribe());
+        InternetService.startService(incomeMessagesHandler::handle);
 
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavInflater inflater = navHostFragment.getNavController().getNavInflater();

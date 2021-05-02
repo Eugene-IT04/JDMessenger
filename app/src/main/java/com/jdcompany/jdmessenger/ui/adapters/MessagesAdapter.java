@@ -17,10 +17,12 @@ import com.jdcompany.jdmessenger.data.Message;
 import com.jdcompany.jdmessenger.domain.Chat;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.MessageViewHolder> {
+
     List<Message> data;
     Chat chat;
     SimpleDateFormat simpleDateFormat;
@@ -28,8 +30,13 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     public MessagesAdapter(Chat chat) {
         super();
         this.chat = chat;
-        data = chat.getMessagesList();
+        data = new ArrayList<>();
         simpleDateFormat = new SimpleDateFormat("HH:mm");
+    }
+
+    public void setMessagesCollection(List<Message> data){
+        this.data = data;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -45,7 +52,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         holder.setText(data.get(position).getBody());
         holder.setLeftSide(chat.isLeftSide(data.get(position)));
         holder.tvMessageTime.setText(simpleDateFormat.format(new Date(data.get(position).getTime())));
-        //holder.setLeftSide(true);
     }
 
     @Override

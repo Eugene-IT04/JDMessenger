@@ -4,6 +4,6 @@ import com.jdcompany.jdmessenger.data.Message;
 
 import java.util.List;
 
-public interface CallBackUpdate {
-    void update(List<Message> messages);
+public interface IIncomeMessagesHandler {
+    void handle(List<Message> messages);
 }
