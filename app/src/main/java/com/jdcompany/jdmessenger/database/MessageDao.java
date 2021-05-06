@@ -17,7 +17,7 @@ import io.reactivex.Maybe;
 @Dao
 public interface MessageDao {
 
-    @Query("SELECT * FROM messages WHERE fromId + toId = :key ORDER BY time")
+    @Query("SELECT * FROM messages WHERE fromId + toId = :key ORDER BY time DESC")
     Flowable<List<Message>> getAllForKey(long key);
 
 //    @Query("SELECT MAX(time) FROM messages WHERE fromId + toId = :key")

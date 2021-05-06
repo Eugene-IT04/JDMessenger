@@ -2,48 +2,42 @@ package com.jdcompany.jdmessenger.ui.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.Message;
+import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 import com.jdcompany.jdmessenger.database.MessageDao;
 import com.jdcompany.jdmessenger.database.UserDao;
 import com.jdcompany.jdmessenger.domain.Chat;
 import com.jdcompany.jdmessenger.ui.adapters.MessagesAdapter;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class ChatFragment extends Fragment implements View.OnClickListener {
 
     RecyclerView recyclerViewMessages;
     MessagesAdapter messagesAdapter;
-    Chat chat;
+    Chat currentChat;
     Context context;
-    EditText etMessage;
-    ImageButton imageButton;
+    EditText etMessageText;
+    ImageButton ibSendMessage;
     MessageDao messageDao;
     UserDao userDao;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 
     @Nullable
@@ -54,30 +48,49 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        TextView tv = view.findViewById(R.id.tvChatName);
+
+        //find views
+        TextView tvDestinationName = view.findViewById(R.id.tvChatName);
         recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
-        etMessage = view.findViewById(R.id.editText);
-        imageButton = view.findViewById(R.id.ibSendButton);
-        imageButton.setEnabled(false);
+        etMessageText = view.findViewById(R.id.editText);
+        ibSendMessage = view.findViewById(R.id.ibSendButton);
+
+        //config views
+        ibSendMessage.setEnabled(false);
+        ibSendMessage.setOnClickListener(this);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+        linearLayoutManager.setReverseLayout(true);
+        messagesAdapter = new MessagesAdapter();
+        recyclerViewMessages.setLayoutManager(linearLayoutManager);
+        recyclerViewMessages.setAdapter(messagesAdapter);
+
+        //get Dao-s
         userDao = AppDatabase.getInstance(getContext()).userDao();
         messageDao = AppDatabase.getInstance(getContext()).messageDao();
 
-        userDao.getUserById(getArguments().getLong("userId"))
+        long destinationId = getArguments().getLong("userId");
+
+        //load user's profile from database and
+        compositeDisposable.add(userDao.getUserById(destinationId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
-                    chat = new Chat(user, messageDao);
-                    imageButton.setEnabled(true);
-                    tv.setText(chat.getDestination().getName());
-                });
+                    currentChat = new Chat(user, messageDao);
+                    messagesAdapter.setChat(currentChat);
 
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
-        linearLayoutManager.setReverseLayout(true);
-        recyclerViewMessages.setLayoutManager(linearLayoutManager);
-        messagesAdapter = new MessagesAdapter(chat);
-        //chat.setCallBackUpdate(() -> getActivity().runOnUiThread(()-> messagesAdapter.notifyDataSetChanged()));
-        recyclerViewMessages.setAdapter(messagesAdapter);
-        imageButton.setOnClickListener(this);
+                    //update UI when user is loaded
+                    ibSendMessage.setEnabled(true);
+                    tvDestinationName.setText(currentChat.getDestination().getName());
+                }));
+
+        //load messages from database
+        compositeDisposable.add(
+                messageDao.getAllForKey(destinationId + InfoLoader.getInstance().getCurrentUser().getId())
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(list -> {
+                            messagesAdapter.setMessagesCollection(list);
+                        }));
     }
 
     @Override
@@ -89,14 +102,20 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDetach() {
         super.onDetach();
+        this.context = null;
     }
 
     @Override
     public void onClick(View v) {
-        String string = etMessage.getText().toString();
-        chat.sendTextMessage(string);
-        etMessage.setText("");
+        String string = etMessageText.getText().toString();
+        currentChat.sendTextMessage(string);
+        etMessageText.setText("");
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.dispose();
     }
 }
 

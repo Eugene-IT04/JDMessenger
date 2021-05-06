@@ -31,7 +31,9 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                         .findUser(message.getFromId(), new CallBackFindUser() {
                             @Override
                             public void onUserFound(User user) {
-                                userDao.insert(user).subscribe();
+                                userDao.insert(user)
+                                        .subscribeOn(Schedulers.io())
+                                        .subscribe(() -> {}, e -> {});
                             }
 
                             @Override

@@ -36,14 +36,14 @@ public class HomeActivity extends AppCompatActivity {
         userDao = AppDatabase.getInstance(this).userDao();
         incomeMessagesHandler = new IncomeMessagesHandler(userDao, messageDao);
 
-        InternetService.startService(incomeMessagesHandler::handle);
-
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
         NavInflater inflater = navHostFragment.getNavController().getNavInflater();
         NavGraph graph = inflater.inflate(R.navigation.nav_graph);
         if (!readUserDataForInfoLoader()) graph.setStartDestination(R.id.registerUserFragment);
         else graph.setStartDestination(R.id.mainScreenFragment);
         navHostFragment.getNavController().setGraph(graph);
+
+        InternetService.startService(incomeMessagesHandler::handle);
     }
 
 

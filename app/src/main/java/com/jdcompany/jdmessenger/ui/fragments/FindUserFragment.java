@@ -22,6 +22,7 @@ import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class FindUserFragment extends Fragment implements View.OnClickListener {
@@ -29,6 +30,7 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
     EditText etFindUserTag;
     Button btnFindUser;
     Context context;
+    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Nullable
     @Override
@@ -39,9 +41,12 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        //find views
         etFindUserTag = view.findViewById(R.id.etFindUserTag);
         btnFindUser = view.findViewById(R.id.btnFindUser);
 
+        //config views
         btnFindUser.setOnClickListener(this);
     }
 
@@ -64,7 +69,7 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
             InternetService.getInstance().findUser(etFindUserTag.getText().toString(), new CallBackFindUser() {
                 @Override
                 public void onUserFound(User user) {
-                    AppDatabase.getInstance(getContext()).userDao().insert(user)
+                    compositeDisposable.add(AppDatabase.getInstance(getContext()).userDao().insert(user)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(() ->
@@ -72,7 +77,7 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
                             e-> {
                                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 btnFindUser.setEnabled(true);
-                            });
+                            }));
                 }
 
                 @Override
@@ -88,5 +93,11 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
                 }
             });
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if(compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.dispose();
     }
 }

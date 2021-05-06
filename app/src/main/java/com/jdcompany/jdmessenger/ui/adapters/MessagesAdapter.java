@@ -1,7 +1,9 @@
 package com.jdcompany.jdmessenger.ui.adapters;
 
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -14,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.Message;
+import com.jdcompany.jdmessenger.data.User;
 import com.jdcompany.jdmessenger.domain.Chat;
 
 import java.text.SimpleDateFormat;
@@ -26,12 +29,39 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     List<Message> data;
     Chat chat;
     SimpleDateFormat simpleDateFormat;
+    private int position;
 
-    public MessagesAdapter(Chat chat) {
+    public int getPosition(){
+        return position;
+    }
+
+    public List<Message> getData(){
+        return data;
+    }
+
+    public void setPosition(int position){
+        this.position = position;
+    }
+
+
+    public interface OnItemClickListener {
+        void onUserItemClicked(Message messageModel);
+    }
+
+    private MessagesAdapter.OnItemClickListener onItemClickListener;
+
+    public void setOnItemClickListener (MessagesAdapter.OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public MessagesAdapter() {
         super();
-        this.chat = chat;
         data = new ArrayList<>();
         simpleDateFormat = new SimpleDateFormat("HH:mm");
+    }
+
+    public void setChat(Chat chat){
+        this.chat = chat;
     }
 
     public void setMessagesCollection(List<Message> data){
@@ -48,18 +78,27 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-
         holder.setText(data.get(position).getBody());
         holder.setLeftSide(chat.isLeftSide(data.get(position)));
         holder.tvMessageTime.setText(simpleDateFormat.format(new Date(data.get(position).getTime())));
+
+        holder.itemView.setOnLongClickListener(v -> {
+            setPosition(holder.getAdapterPosition());
+            return false;
+        });
+
+        holder.itemView.setOnClickListener(v -> {
+            if (MessagesAdapter.this.onItemClickListener != null)
+                MessagesAdapter.this.onItemClickListener.onUserItemClicked(data.get(position));
+        });
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return chat == null ? 0 : data.size();
     }
 
-    static class MessageViewHolder extends RecyclerView.ViewHolder {
+    static class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         TextView tvMessage;
         TextView tvMessageTime;
         ConstraintLayout clMessageContainer;
@@ -69,6 +108,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             tvMessage = itemView.findViewById(R.id.tvMessage);
             tvMessageTime = itemView.findViewById(R.id.tvMessageTime);
             clMessageContainer = itemView.findViewById(R.id.flMessageContainer);
+            this.itemView.setOnCreateContextMenuListener(this);
         }
 
         void setText(String text) {
@@ -76,17 +116,23 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         }
 
         void setLeftSide(boolean side) {
-            FrameLayout.LayoutParams frameLaoutParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
             if (side) {
-                frameLaoutParams.gravity = Gravity.LEFT;
+                frameLayoutParams.gravity = Gravity.LEFT;
                 clMessageContainer.setBackgroundResource(R.drawable.message_left_drawable);
-                frameLaoutParams.leftMargin = 20;
+                frameLayoutParams.leftMargin = 20;
             } else {
-                frameLaoutParams.gravity = Gravity.RIGHT;
+                frameLayoutParams.gravity = Gravity.RIGHT;
                 clMessageContainer.setBackgroundResource(R.drawable.message_right_drawable);
-                frameLaoutParams.rightMargin = 20;
+                frameLayoutParams.rightMargin = 20;
             }
-            clMessageContainer.setLayoutParams(frameLaoutParams);
+            clMessageContainer.setLayoutParams(frameLayoutParams);
+        }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            menu.add(Menu.NONE, R.id.optionDeleteMessageGlobally, Menu.NONE, R.string.optionDeleteMessageGlobally);
+            menu.add(Menu.NONE, R.id.optionDeleteMessageLocally, Menu.NONE, R.string.optionDeleteMessageLocally);
         }
     }
 }

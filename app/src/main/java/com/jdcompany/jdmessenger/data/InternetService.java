@@ -29,12 +29,11 @@ import retrofit2.http.Query;
 
 public class InternetService {
     private static InternetService internetService;
-    private static String BASE_URL = "http://34.77.103.22:8000";
+    private static String BASE_URL = "http://34.78.104.83:8000";
 
     private InternetApi internetApi;
     private ScheduledExecutorService scheduledExecutorService;
     private CallBackMessagesReceived callBackMessagesReceived;
-    private User infoLoader;
 
     private InternetService() {
     }
@@ -54,7 +53,6 @@ public class InternetService {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             internetService.internetApi = retrofit.create(InternetApi.class);
-            internetService.infoLoader = InfoLoader.getInstance().getCurrentUser();
             internetService.scheduledExecutorService = Executors.newScheduledThreadPool(1);
             internetService.scheduledExecutorService.scheduleWithFixedDelay(internetService::updateMessages, 0, 1, TimeUnit.SECONDS);
             internetService.callBackMessagesReceived = callBackMessagesReceived;
@@ -66,14 +64,17 @@ public class InternetService {
         internetApi.sendMessage(message).enqueue(new Callback<CallBackInfo>() {
             @Override
             public void onResponse(Call<CallBackInfo> call, Response<CallBackInfo> response) {
-                CallBackInfo callBackInfo = response.body();
-                message.setId(callBackInfo.getId());
-                message.setTime(callBackInfo.getTime());
-                callBackSendMessage.onMessageSent(message);
+                if(callBackSendMessage != null && message != null) {
+                    CallBackInfo callBackInfo = response.body();
+                    message.setId(callBackInfo.getId());
+                    message.setTime(callBackInfo.getTime());
+                    callBackSendMessage.onMessageSent(message);
+                }
             }
 
             @Override
             public void onFailure(Call<CallBackInfo> call, Throwable t) {
+                if(callBackSendMessage!= null)
                 callBackSendMessage.onFailure();
             }
         });
@@ -84,15 +85,18 @@ public class InternetService {
         internetApi.registerUser(user).enqueue(new Callback<CallBackInfo>() {
             @Override
             public void onResponse(Call<CallBackInfo> call, Response<CallBackInfo> response) {
-                CallBackInfo callBackInfo = response.body();
-                if (callBackInfo.getStatus().equals("success")) {
-                    user.setId(callBackInfo.getId());
-                    callBackRegisterUser.onUserRegistered(user);
-                } else callBackRegisterUser.onUserTagIsTaken();
+                if(callBackRegisterUser != null && user != null) {
+                    CallBackInfo callBackInfo = response.body();
+                    if (callBackInfo.getStatus().equals("success")) {
+                        user.setId(callBackInfo.getId());
+                        callBackRegisterUser.onUserRegistered(user);
+                    } else callBackRegisterUser.onUserTagIsTaken();
+                }
             }
 
             @Override
             public void onFailure(Call<CallBackInfo> call, Throwable t) {
+                if(callBackRegisterUser != null)
                 callBackRegisterUser.onFailure();
             }
         });
@@ -102,14 +106,17 @@ public class InternetService {
         internetApi.getUserByTag(tag).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Object callBackObject = response.body();
-                if(callBackObject instanceof User)
-                    callBackFindUser.onUserFound((User)callBackObject);
-                else callBackFindUser.onUserDoesNotExist();
+                if(callBackFindUser != null) {
+                    Object callBackObject = response.body();
+                    if (callBackObject instanceof User)
+                        callBackFindUser.onUserFound((User) callBackObject);
+                    else callBackFindUser.onUserDoesNotExist();
+                }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                if(callBackFindUser != null)
                 callBackFindUser.onFailure();
             }
         });
@@ -119,14 +126,17 @@ public class InternetService {
         internetApi.getUserById(id).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                Object callBackObject = response.body();
-                if(callBackObject instanceof User)
-                    callBackFindUser.onUserFound((User)callBackFindUser);
-                else callBackFindUser.onUserDoesNotExist();
+                if(callBackFindUser != null) {
+                    Object callBackObject = response.body();
+                    if (callBackObject instanceof User)
+                        callBackFindUser.onUserFound((User) callBackObject);
+                    else callBackFindUser.onUserDoesNotExist();
+                }
             }
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
+                if(callBackFindUser != null)
                 callBackFindUser.onFailure();
             }
         });
@@ -134,7 +144,7 @@ public class InternetService {
 
     void updateMessages() {
         try {
-            Response<List<Message>> response = internetApi.getMessages(infoLoader.getId()).execute();
+            Response<List<Message>> response = internetApi.getMessages(InfoLoader.getInstance().getCurrentUser().getId()).execute();
             List<Message> messages = response.body();
             if (messages != null && messages.size() > 0)
                 callBackMessagesReceived.updateMessages(messages);
