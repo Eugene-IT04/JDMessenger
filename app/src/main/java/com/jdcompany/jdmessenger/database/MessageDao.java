@@ -20,8 +20,8 @@ public interface MessageDao {
     @Query("SELECT * FROM messages WHERE fromId + toId = :key ORDER BY time DESC")
     Flowable<List<Message>> getAllForKey(long key);
 
-//    @Query("SELECT MAX(time) FROM messages WHERE fromId + toId = :key")
-//    Maybe<Message> getLastMessageByKey(long key);
+    @Query("SELECT m.* FROM messages m LEFT JOIN messages b ON m.fromId + m.toId = b.fromId + b.toId AND m.time < b.time WHERE b.time IS NULL")
+    Flowable<List<Message>> getLastMessagesByKeys();
 
     @Insert
     Completable insert(Message message);

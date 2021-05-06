@@ -3,6 +3,7 @@ package com.jdcompany.jdmessenger.ui.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -89,6 +90,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(list -> {
+                            //update UI when messages are loaded
                             messagesAdapter.setMessagesCollection(list);
                         }));
     }
@@ -115,7 +117,21 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.dispose();
+        if (compositeDisposable != null && !compositeDisposable.isDisposed())
+            compositeDisposable.dispose();
+    }
+
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        int position = messagesAdapter.getPosition();
+        switch (item.getItemId()){
+            case R.id.optionDeleteMessageLocally:
+                messageDao.delete(messagesAdapter.getData().get(position))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+                break;
+        }
+        return super.onContextItemSelected(item);
     }
 }
 

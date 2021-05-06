@@ -6,6 +6,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -15,12 +17,21 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
+import com.jdcompany.jdmessenger.data.InfoLoader;
+import com.jdcompany.jdmessenger.data.Message;
+import com.jdcompany.jdmessenger.data.User;
 import com.jdcompany.jdmessenger.database.AppDatabase;
+import com.jdcompany.jdmessenger.database.MessageDao;
 import com.jdcompany.jdmessenger.database.UserDao;
 import com.jdcompany.jdmessenger.ui.adapters.UsersAdapter;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainScreenFragment extends Fragment implements View.OnClickListener {
@@ -29,6 +40,7 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
     CompositeDisposable compositeDisposable;
     UsersAdapter usersAdapter = new UsersAdapter();
     UserDao userDao;
+    MessageDao messageDao;
 
     @Nullable
     @Override
@@ -47,7 +59,8 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         btnFindNewUser = view.findViewById(R.id.btnFindNewUser);
         btnFindNewUser.setOnClickListener(this);
 
-        userDao = AppDatabase.getInstance(getContext()).userDao();
+        userDao = AppDatabase.getInstance(null).userDao();
+        messageDao = AppDatabase.getInstance(null).messageDao();
 
         compositeDisposable = new CompositeDisposable();
         createObserver();
@@ -57,7 +70,6 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
             bundle.putLong("userId", userModel.getId());
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_chatFragment, bundle);
         });
-
     }
 
     @Override
@@ -68,6 +80,7 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
                 userDao.delete(usersAdapter.getData().get(position))
                         .subscribeOn(Schedulers.io())
                         .subscribe();
+                break;
         }
         return super.onContextItemSelected(item);
     }
@@ -81,7 +94,17 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         compositeDisposable.add(userDao
                 .getAll()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> usersAdapter.setUsersCollection(list), e -> {}));
+                .subscribe(list -> {
+                    usersAdapter.setUsersCollection(list);
+//                    List<Long> ids = new ArrayList<>();
+//                    for(User u : list) ids.add(u.getId());
+//                    compositeDisposable.add(
+//                            messageDao.getLastMessagesByKeys(ids)
+//                            .subscribeOn(Schedulers.io())
+//                            .observeOn(AndroidSchedulers.mainThread())
+//                            .subscribe()
+//                    );
+                }, e -> {}));
     }
 
     @Override
