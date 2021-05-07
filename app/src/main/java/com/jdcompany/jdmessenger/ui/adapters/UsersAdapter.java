@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
+import com.jdcompany.jdmessenger.data.Message;
 import com.jdcompany.jdmessenger.data.User;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     }
 
     List<User> data;
+    List<Message> lastMessages;
     private int position;
 
     public int getPosition(){
@@ -53,6 +55,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         notifyDataSetChanged();
     }
 
+    public void setLastMessagesCollection(List<Message> messagesList){
+        this.lastMessages = messagesList;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -62,7 +69,24 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @Override
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
-        holder.tvUserName.setText(data.get(position).getName());
+        User userOnPosition = data.get(position);
+        holder.tvUserName.setText(userOnPosition.getName());
+
+        String textForLastMessage = null;
+        for(Message message : lastMessages){
+            if(message.getFromId() == userOnPosition.getId() || message.getToId() == userOnPosition.getId()){
+                textForLastMessage = message.getBody();
+                break;
+            }
+        }
+
+        if(textForLastMessage == null) textForLastMessage = "No messages yet";
+        else if(textForLastMessage.length() > 40){
+            textForLastMessage = textForLastMessage.substring(0, 37) + "...";
+        }
+
+        holder.tvLastMessage.setText(textForLastMessage);
+
         holder.itemView.setOnLongClickListener(v -> {
             setPosition(holder.getAdapterPosition());
             return false;

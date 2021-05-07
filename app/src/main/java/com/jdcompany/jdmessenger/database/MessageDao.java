@@ -21,7 +21,7 @@ public interface MessageDao {
     Flowable<List<Message>> getAllForKey(long key);
 
     @Query("SELECT m.* FROM messages m LEFT JOIN messages b ON m.fromId + m.toId = b.fromId + b.toId AND m.time < b.time WHERE b.time IS NULL")
-    Flowable<List<Message>> getLastMessagesByKeys();
+    Flowable<List<Message>> getLastMessagesForAllChats();
 
     @Insert
     Completable insert(Message message);
