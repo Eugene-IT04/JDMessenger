@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
+import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 import com.jdcompany.jdmessenger.database.MessageDao;
 import com.jdcompany.jdmessenger.database.UserDao;
@@ -58,6 +59,7 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         usersAdapter.setOnItemClickListener(userModel -> {
             Bundle bundle = new Bundle();
             bundle.putLong("userId", userModel.getId());
+            bundle.putString("userName", userModel.getName());
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_chatFragment, bundle);
         });
     }
@@ -68,6 +70,11 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
         switch (item.getItemId()) {
             case R.id.optionDeleteUser:
                 userDao.delete(usersAdapter.getData().get(position))
+                        .subscribeOn(Schedulers.io())
+                        .subscribe();
+                break;
+            case R.id.optionClearChat:
+                messageDao.deleteAllMessagesByKey(usersAdapter.getData().get(position).getId() + InfoLoader.getInstance().getCurrentUser().getId())
                         .subscribeOn(Schedulers.io())
                         .subscribe();
                 break;

@@ -66,6 +66,10 @@ public class InternetService {
             public void onResponse(Call<CallBackInfo> call, Response<CallBackInfo> response) {
                 if(callBackSendMessage != null && message != null) {
                     CallBackInfo callBackInfo = response.body();
+                    if(callBackInfo.getStatus().equals("fail")){
+                        callBackSendMessage.onFailure();
+                        return;
+                    }
                     message.setId(callBackInfo.getId());
                     message.setTime(callBackInfo.getTime());
                     callBackSendMessage.onMessageSent(message);

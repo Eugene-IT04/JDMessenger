@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     Chat currentChat;
     Context context;
     EditText etMessageText;
-    ImageButton ibSendMessage;
+    Button btnSendMessage;
     MessageDao messageDao;
     UserDao userDao;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
@@ -54,16 +55,18 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
         TextView tvDestinationName = view.findViewById(R.id.tvChatName);
         recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
         etMessageText = view.findViewById(R.id.editText);
-        ibSendMessage = view.findViewById(R.id.ibSendButton);
+        btnSendMessage = view.findViewById(R.id.btnSendMessage);
 
         //config views
-        ibSendMessage.setEnabled(false);
-        ibSendMessage.setOnClickListener(this);
+        btnSendMessage.setEnabled(false);
+        btnSendMessage.setOnClickListener(this);
+        btnSendMessage.bringToFront();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         linearLayoutManager.setReverseLayout(true);
         messagesAdapter = new MessagesAdapter();
         recyclerViewMessages.setLayoutManager(linearLayoutManager);
         recyclerViewMessages.setAdapter(messagesAdapter);
+        tvDestinationName.setText(getArguments().getString("userName"));
 
         //get Dao-s
         userDao = AppDatabase.getInstance(getContext()).userDao();
@@ -80,8 +83,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
                     messagesAdapter.setChat(currentChat);
 
                     //update UI when user is loaded
-                    ibSendMessage.setEnabled(true);
-                    tvDestinationName.setText(currentChat.getDestination().getName());
+                    btnSendMessage.setEnabled(true);
                 }));
 
         //load messages from database
@@ -110,6 +112,7 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         String string = etMessageText.getText().toString();
+        if(!string.isEmpty())
         currentChat.sendTextMessage(string);
         etMessageText.setText("");
     }

@@ -23,6 +23,9 @@ public interface MessageDao {
     @Query("SELECT m.* FROM messages m LEFT JOIN messages b ON m.fromId + m.toId = b.fromId + b.toId AND m.time < b.time WHERE b.time IS NULL")
     Flowable<List<Message>> getLastMessagesForAllChats();
 
+    @Query("DELETE FROM messages WHERE toId + fromId = :key")
+    Completable deleteAllMessagesByKey(long key);
+
     @Insert
     Completable insert(Message message);
 

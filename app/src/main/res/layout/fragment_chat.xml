@@ -15,7 +15,8 @@
             android:id="@+id/tvChatName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"/>
+            android:textSize="20sp"
+            android:textColor="@color/black"/>
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -54,13 +55,23 @@
             android:inputType="textCapSentences"
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/ibSendButton"
+            app:layout_constraintEnd_toStartOf="@id/btnSendMessage"
             app:layout_constraintStart_toEndOf="@+id/imageButton"
             app:layout_constraintTop_toTopOf="parent">
         </EditText>
 
-        <ImageButton
-            android:id="@+id/ibSendButton"
+<!--        <ImageView-->
+<!--            android:id="@+id/imSendButton"-->
+<!--            android:layout_width="26dp"-->
+<!--            android:layout_height="26dp"-->
+<!--            app:layout_constraintBottom_toBottomOf="parent"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            android:background="@drawable/button_send"-->
+<!--            android:layout_marginEnd="10dp"/>-->
+
+        <Button
+            android:id="@+id/btnSendMessage"
             android:layout_width="26dp"
             android:layout_height="26dp"
             app:layout_constraintBottom_toBottomOf="parent"

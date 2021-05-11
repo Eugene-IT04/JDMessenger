@@ -38,6 +38,14 @@
         app:layout_constraintLeft_toLeftOf="@id/tvUserName"
         tools:text="Last message from the user"/>
 
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1px"
+        android:background="@android:color/darker_gray"
+        android:layout_marginLeft="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/ivUserPicture"
+        app:layout_constraintRight_toRightOf="parent"/>
 
 
 
