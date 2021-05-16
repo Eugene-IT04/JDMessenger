@@ -1,11 +1,13 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -24,10 +26,10 @@ import com.jdcompany.jdmessenger.data.User;
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
-public class RegisterUserFragment extends Fragment implements View.OnClickListener, CallBackRegisterUser {
+public class RegisterUserFragment extends BaseFragment implements View.OnClickListener, CallBackRegisterUser {
+
     Button btnSignUp;
     EditText etSignUpName, etSignUpTag;
-    Context context;
 
     @Nullable
     @Override
@@ -42,18 +44,6 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
         etSignUpName = view.findViewById(R.id.etSignUpName);
         etSignUpTag = view.findViewById(R.id.etSignUpTag);
         btnSignUp.setOnClickListener(this);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        context = null;
     }
 
     @Override
@@ -75,6 +65,7 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
         btnSignUp.setEnabled(true);
         InfoLoader.getInstance().setCurrentUser(user);
         saveUserDataForInfoLoader(user);
+        hideKeyboard(requireActivity());
         Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
     }
 
@@ -102,6 +93,17 @@ public class RegisterUserFragment extends Fragment implements View.OnClickListen
             fos.close();
         } catch (Exception e) {
             Toast.makeText(context, "Failed to save data", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager inputManager = (InputMethodManager) activity
+                .getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        // check if no view has focus:
+        View currentFocusedView = activity.getCurrentFocus();
+        if (currentFocusedView != null) {
+            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 }

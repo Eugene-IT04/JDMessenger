@@ -6,5 +6,5 @@ public interface CallBackSendMessage {
 
     void onMessageSent(Message message);
 
-    void onFailure();
+    void onFailure(Throwable t);
 }

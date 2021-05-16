@@ -1,4 +1,4 @@
-package com.jdcompany.jdmessenger.domain;
+package com.jdcompany.jdmessenger.domain.callbacks;
 
 import com.jdcompany.jdmessenger.data.Message;
 

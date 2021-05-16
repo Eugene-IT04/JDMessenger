@@ -1,7 +1,5 @@
 package com.jdcompany.jdmessenger.data;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 
 import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
@@ -9,14 +7,12 @@ import com.jdcompany.jdmessenger.data.callbacks.CallBackInfo;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackMessagesReceived;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackSendMessage;
-import com.jdcompany.jdmessenger.domain.CallBackUpdate;
 
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import io.reactivex.Completable;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,7 +63,7 @@ public class InternetService {
                 if(callBackSendMessage != null && message != null) {
                     CallBackInfo callBackInfo = response.body();
                     if(callBackInfo.getStatus().equals("fail")){
-                        callBackSendMessage.onFailure();
+                        callBackSendMessage.onFailure(new Throwable("fail from server"));
                         return;
                     }
                     message.setId(callBackInfo.getId());
@@ -79,7 +75,7 @@ public class InternetService {
             @Override
             public void onFailure(Call<CallBackInfo> call, Throwable t) {
                 if(callBackSendMessage!= null)
-                callBackSendMessage.onFailure();
+                callBackSendMessage.onFailure(t);
             }
         });
     }

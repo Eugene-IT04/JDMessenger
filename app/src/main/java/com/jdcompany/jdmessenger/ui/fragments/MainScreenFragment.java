@@ -25,10 +25,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainScreenFragment extends Fragment implements View.OnClickListener {
+public class MainScreenFragment extends BaseFragment implements View.OnClickListener {
 
     Button btnFindNewUser;
-    CompositeDisposable compositeDisposable;
     UsersAdapter usersAdapter = new UsersAdapter();
     UserDao userDao;
     MessageDao messageDao;
@@ -101,12 +100,5 @@ public class MainScreenFragment extends Fragment implements View.OnClickListener
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(list ->
                         usersAdapter.setLastMessagesCollection(list), e -> {}));
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (compositeDisposable != null && !compositeDisposable.isDisposed())
-            compositeDisposable.dispose();
     }
 }

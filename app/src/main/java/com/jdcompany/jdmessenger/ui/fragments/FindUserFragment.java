@@ -25,12 +25,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class FindUserFragment extends Fragment implements View.OnClickListener {
+public class FindUserFragment extends BaseFragment implements View.OnClickListener {
 
     EditText etFindUserTag;
     Button btnFindUser;
-    Context context;
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     @Nullable
     @Override
@@ -48,18 +46,6 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
 
         //config views
         btnFindUser.setOnClickListener(this);
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        context = null;
     }
 
     @Override
@@ -93,11 +79,5 @@ public class FindUserFragment extends Fragment implements View.OnClickListener {
                 }
             });
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if(compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.dispose();
     }
 }

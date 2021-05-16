@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -29,17 +30,15 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class ChatFragment extends Fragment implements View.OnClickListener {
+public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
     RecyclerView recyclerViewMessages;
     MessagesAdapter messagesAdapter;
     Chat currentChat;
-    Context context;
     EditText etMessageText;
     Button btnSendMessage;
     MessageDao messageDao;
     UserDao userDao;
-    CompositeDisposable compositeDisposable = new CompositeDisposable();
 
 
     @Nullable
@@ -98,30 +97,11 @@ public class ChatFragment extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        this.context = null;
-    }
-
-    @Override
     public void onClick(View v) {
         String string = etMessageText.getText().toString();
         if(!string.isEmpty())
-        currentChat.sendTextMessage(string);
+        currentChat.sendTextMessage(string, t -> Toast.makeText(context, "Failed to send message", Toast.LENGTH_SHORT).show());
         etMessageText.setText("");
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (compositeDisposable != null && !compositeDisposable.isDisposed())
-            compositeDisposable.dispose();
     }
 
     @Override
