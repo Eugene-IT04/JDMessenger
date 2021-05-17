@@ -9,15 +9,13 @@ import android.os.Bundle;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
-import com.jdcompany.jdmessenger.data.objects.User;
 import com.jdcompany.jdmessenger.data.network.IncomeMessagesChecker;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 import com.jdcompany.jdmessenger.database.daos.MessageDao;
 import com.jdcompany.jdmessenger.database.daos.UserDao;
 import com.jdcompany.jdmessenger.domain.IncomeMessagesHandler;
-
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
+;
+import java.io.IOException;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -58,24 +56,18 @@ public class HomeActivity extends AppCompatActivity {
         NavInflater inflater = navHostFragment.getNavController().getNavInflater();
         NavGraph graph = inflater.inflate(R.navigation.nav_graph);
 
+        boolean managedReadUser;
+
+        try{
+            managedReadUser = InfoLoader.getInstance().readUserData(openFileInput(InfoLoader.USER_DATA_FILE_NAME));
+        } catch (IOException e){
+            managedReadUser = false;
+        }
+
         //if there is user's data in memory -> start mainScreenFragment
         //else -> start registerUserUserFragment
-        if (!readUserDataForInfoLoader()) graph.setStartDestination(R.id.registerUserFragment);
-        else graph.setStartDestination(R.id.mainScreenFragment);
+        if (managedReadUser) graph.setStartDestination(R.id.mainScreenFragment);
+        else graph.setStartDestination(R.id.registerUserFragment);
         navHostFragment.getNavController().setGraph(graph);
-    }
-
-    boolean readUserDataForInfoLoader() {
-        User user;
-        try {
-            FileInputStream fileIn = openFileInput(InfoLoader.USER_DATA_FILE_NAME);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileIn);
-            user = (User) objectInputStream.readObject();
-            InfoLoader.getInstance().setCurrentUser(user);
-            objectInputStream.close();
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 }

@@ -65,13 +65,13 @@ public class FindUserFragment extends BaseFragment implements View.OnClickListen
                 @Override
                 public void onUserDoesNotExist() {
                     btnFindUser.setEnabled(true);
-                    Toast.makeText(context, "User not found", Toast.LENGTH_SHORT).show();
+                    showToastMessage("User not found");
                 }
 
                 @Override
                 public void onFailure() {
                     btnFindUser.setEnabled(true);
-                    Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
+                    showToastMessage("Something went wrong");
                 }
             });
         }

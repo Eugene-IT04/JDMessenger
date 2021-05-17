@@ -101,7 +101,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         String string = etMessageText.getText().toString();
         if(!string.isEmpty())
-        currentChat.sendTextMessage(string, t -> Toast.makeText(context, "Failed to send message", Toast.LENGTH_SHORT).show());
+        currentChat.sendTextMessage(string, t -> showToastMessage("Failed to send message"));
         etMessageText.setText("");
     }
 

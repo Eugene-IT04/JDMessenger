@@ -24,7 +24,7 @@ public class Chat {
         Message message = new Message();
         message.setFromId(InfoLoader.getInstance().getCurrentUser().getId());
         message.setToId(destination.getId());
-        message.setAction("text");
+        message.setAction(MessageAction.TEXT.toString());
         message.setBody(text);
         internetService.sendMessage(message, new CallBackSendMessage() {
             @Override

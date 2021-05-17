@@ -4,6 +4,7 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.jdcompany.jdmessenger.data.objects.Message;
 
@@ -23,6 +24,12 @@ public interface MessageDao {
 
     @Query("DELETE FROM messages WHERE toId + fromId = :key")
     Completable deleteAllMessagesByKey(long key);
+
+    @Query("DELETE FROM messages WHERE id = :id")
+    Completable deleteMessageById(long id);
+
+    @Query("UPDATE messages SET body = :newBody WHERE id = :messageId")
+    Completable updateMessageWithId(long messageId, String newBody);
 
     @Insert
     Completable insert(Message message);

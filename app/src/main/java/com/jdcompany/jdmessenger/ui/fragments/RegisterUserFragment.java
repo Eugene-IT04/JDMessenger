@@ -47,7 +47,7 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onClick(View v) {
         if (etSignUpName.getText().toString().isEmpty() || etSignUpTag.getText().toString().isEmpty()) {
-            Toast.makeText(context, "Incorrect name or tag", Toast.LENGTH_SHORT).show();
+            showToastMessage("Incorrect name or tag");
         } else {
             btnSignUp.setEnabled(false);
             User user = new User();
@@ -70,16 +70,13 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onUserTagIsTaken() {
         btnSignUp.setEnabled(true);
-        Toast.makeText(context, "Tag is already taken", Toast.LENGTH_SHORT).show();
+        showToastMessage("Tag is already taken");
     }
 
     @Override
     public void onFailure() {
         btnSignUp.setEnabled(true);
-        Toast.makeText(context, "Something went wrong", Toast.LENGTH_SHORT).show();
-
-        //TODO delete this:
-        Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
+        showToastMessage("Something went wrong");
     }
 
     private void saveUserDataForInfoLoader(User user) {
@@ -90,7 +87,7 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
             os.close();
             fos.close();
         } catch (Exception e) {
-            Toast.makeText(context, "Failed to save data", Toast.LENGTH_SHORT).show();
+            showToastMessage("Failed to save data");
         }
     }
 
