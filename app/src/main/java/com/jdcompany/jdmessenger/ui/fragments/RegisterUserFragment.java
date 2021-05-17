@@ -3,7 +3,6 @@ package com.jdcompany.jdmessenger.ui.fragments;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,14 +13,13 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackRegisterUser;
-import com.jdcompany.jdmessenger.data.InternetService;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.network.InternetService;
+import com.jdcompany.jdmessenger.data.objects.User;
 
 import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
@@ -55,7 +53,7 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
             User user = new User();
             user.setName(etSignUpName.getText().toString());
             user.setTag(etSignUpTag.getText().toString());
-            InternetService.getInstance().tryRegisterUser(user, this);
+            InternetService.getInstance().registerUser(user, this);
         }
 
     }

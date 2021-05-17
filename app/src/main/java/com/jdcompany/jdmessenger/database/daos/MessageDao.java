@@ -1,18 +1,16 @@
-package com.jdcompany.jdmessenger.database;
+package com.jdcompany.jdmessenger.database.daos;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.jdcompany.jdmessenger.data.Message;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.objects.Message;
 
 import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Flowable;
-import io.reactivex.Maybe;
 
 @Dao
 public interface MessageDao {

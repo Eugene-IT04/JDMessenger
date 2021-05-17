@@ -6,8 +6,10 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.jdcompany.jdmessenger.data.Message;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.objects.Message;
+import com.jdcompany.jdmessenger.data.objects.User;
+import com.jdcompany.jdmessenger.database.daos.MessageDao;
+import com.jdcompany.jdmessenger.database.daos.UserDao;
 
 @Database(entities = {User.class, Message.class}, version = 1)
 public abstract class AppDatabase extends RoomDatabase {

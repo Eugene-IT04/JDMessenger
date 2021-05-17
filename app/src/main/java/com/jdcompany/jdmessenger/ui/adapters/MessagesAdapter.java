@@ -15,8 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.Message;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.objects.Message;
 import com.jdcompany.jdmessenger.domain.Chat;
 
 import java.text.SimpleDateFormat;

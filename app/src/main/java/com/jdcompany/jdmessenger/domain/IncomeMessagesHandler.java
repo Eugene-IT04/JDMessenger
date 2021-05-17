@@ -1,18 +1,17 @@
 package com.jdcompany.jdmessenger.domain;
 
-import com.jdcompany.jdmessenger.data.InternetService;
-import com.jdcompany.jdmessenger.data.Message;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.network.InternetService;
+import com.jdcompany.jdmessenger.data.objects.Message;
+import com.jdcompany.jdmessenger.data.objects.User;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
-import com.jdcompany.jdmessenger.database.AppDatabase;
-import com.jdcompany.jdmessenger.database.MessageDao;
-import com.jdcompany.jdmessenger.database.UserDao;
+import com.jdcompany.jdmessenger.database.daos.MessageDao;
+import com.jdcompany.jdmessenger.database.daos.UserDao;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class IncomeMessagesHandler implements IIncomeMessagesHandler {
@@ -20,7 +19,7 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
     UserDao userDao;
     MessageDao messageDao;
     Set<User> knownUsers;
-    Disposable disposable;
+    CompositeDisposable compositeDisposable;
 
     @Override
     public void handle(List<Message> messages) {
@@ -31,9 +30,9 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                         .findUser(message.getFromId(), new CallBackFindUser() {
                             @Override
                             public void onUserFound(User user) {
-                                userDao.insert(user)
+                                compositeDisposable.add(userDao.insert(user)
                                         .subscribeOn(Schedulers.io())
-                                        .subscribe(() -> {}, e -> {});
+                                        .subscribe(() -> {}, e -> {}));
                             }
 
                             @Override
@@ -59,12 +58,13 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
         this.userDao = userDao;
         this.messageDao = messageDao;
         knownUsers = new HashSet<>();
-        disposable = userDao.getAll()
+        compositeDisposable = new CompositeDisposable();
+        compositeDisposable.add(userDao.getAll()
                 .subscribeOn(Schedulers.io())
-                .subscribe(incomeList -> knownUsers.addAll(incomeList));
+                .subscribe(incomeList -> knownUsers.addAll(incomeList)));
     }
 
     public void dispose(){
-        if(disposable != null && !disposable.isDisposed()) disposable.dispose();
+        if(compositeDisposable != null && !compositeDisposable.isDisposed()) compositeDisposable.dispose();
     }
 }

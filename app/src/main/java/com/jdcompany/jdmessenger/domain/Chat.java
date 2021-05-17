@@ -1,11 +1,11 @@
 package com.jdcompany.jdmessenger.domain;
 
 import com.jdcompany.jdmessenger.data.InfoLoader;
-import com.jdcompany.jdmessenger.data.InternetService;
-import com.jdcompany.jdmessenger.data.Message;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.network.InternetService;
+import com.jdcompany.jdmessenger.data.objects.Message;
+import com.jdcompany.jdmessenger.data.objects.User;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackSendMessage;
-import com.jdcompany.jdmessenger.database.MessageDao;
+import com.jdcompany.jdmessenger.database.daos.MessageDao;
 import com.jdcompany.jdmessenger.domain.callbacks.CallBackFailedSendMessage;
 
 import io.reactivex.schedulers.Schedulers;

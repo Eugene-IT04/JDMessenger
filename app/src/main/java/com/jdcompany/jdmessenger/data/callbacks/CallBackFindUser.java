@@ -1,6 +1,6 @@
 package com.jdcompany.jdmessenger.data.callbacks;
 
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.objects.User;
 
 public interface CallBackFindUser {
 

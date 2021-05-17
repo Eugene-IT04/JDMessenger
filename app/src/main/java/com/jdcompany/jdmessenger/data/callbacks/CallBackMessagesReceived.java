@@ -1,6 +1,6 @@
 package com.jdcompany.jdmessenger.data.callbacks;
 
-import com.jdcompany.jdmessenger.data.Message;
+import com.jdcompany.jdmessenger.data.objects.Message;
 
 import java.util.List;
 

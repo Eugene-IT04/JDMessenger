@@ -1,6 +1,7 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -29,5 +30,9 @@ abstract public class BaseFragment extends Fragment {
         super.onDestroyView();
         if (compositeDisposable != null && !compositeDisposable.isDisposed())
             compositeDisposable.dispose();
+    }
+
+    protected void showToastMessage(String message){
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 }

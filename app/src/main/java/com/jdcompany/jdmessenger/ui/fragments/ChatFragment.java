@@ -1,6 +1,5 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -8,37 +7,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.database.AppDatabase;
-import com.jdcompany.jdmessenger.database.MessageDao;
-import com.jdcompany.jdmessenger.database.UserDao;
+import com.jdcompany.jdmessenger.database.daos.MessageDao;
+import com.jdcompany.jdmessenger.database.daos.UserDao;
 import com.jdcompany.jdmessenger.domain.Chat;
 import com.jdcompany.jdmessenger.ui.adapters.MessagesAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
     RecyclerView recyclerViewMessages;
     MessagesAdapter messagesAdapter;
-    Chat currentChat;
     EditText etMessageText;
     Button btnSendMessage;
+
     MessageDao messageDao;
     UserDao userDao;
+
+    Chat currentChat;
 
 
     @Nullable
@@ -65,7 +63,10 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
         messagesAdapter = new MessagesAdapter();
         recyclerViewMessages.setLayoutManager(linearLayoutManager);
         recyclerViewMessages.setAdapter(messagesAdapter);
-        tvDestinationName.setText(getArguments().getString("userName"));
+        String destinationName = getArguments().getString("userName");
+        if(destinationName != null)
+        tvDestinationName.setText(destinationName);
+        else throw new IllegalStateException("Need userName");
 
         //get Dao-s
         userDao = AppDatabase.getInstance(getContext()).userDao();

@@ -9,7 +9,6 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,8 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.InfoLoader;
 import com.jdcompany.jdmessenger.database.AppDatabase;
-import com.jdcompany.jdmessenger.database.MessageDao;
-import com.jdcompany.jdmessenger.database.UserDao;
+import com.jdcompany.jdmessenger.database.daos.MessageDao;
+import com.jdcompany.jdmessenger.database.daos.UserDao;
 import com.jdcompany.jdmessenger.ui.adapters.UsersAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -90,9 +89,8 @@ public class MainScreenFragment extends BaseFragment implements View.OnClickList
         compositeDisposable.add(userDao
                 .getAll()
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(list -> {
-                    usersAdapter.setUsersCollection(list);
-                }, e -> {
+                .subscribe(list ->
+                    usersAdapter.setUsersCollection(list), e -> {
                 }));
         compositeDisposable.add(messageDao
                 .getLastMessagesForAllChats()

@@ -1,4 +1,4 @@
-package com.jdcompany.jdmessenger.data.callbacks;
+package com.jdcompany.jdmessenger.data.objects;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

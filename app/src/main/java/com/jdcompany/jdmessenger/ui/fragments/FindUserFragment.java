@@ -1,6 +1,5 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,18 +10,15 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.InfoLoader;
-import com.jdcompany.jdmessenger.data.InternetService;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.network.InternetService;
+import com.jdcompany.jdmessenger.data.objects.User;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
 import com.jdcompany.jdmessenger.database.AppDatabase;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 
 public class FindUserFragment extends BaseFragment implements View.OnClickListener {

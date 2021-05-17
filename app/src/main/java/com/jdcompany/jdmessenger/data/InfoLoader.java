@@ -1,11 +1,6 @@
 package com.jdcompany.jdmessenger.data;
 
-import com.jdcompany.jdmessenger.database.AppDatabase;
-import com.jdcompany.jdmessenger.database.UserDao;
-
-import java.util.List;
-
-import io.reactivex.Flowable;
+import com.jdcompany.jdmessenger.data.objects.User;
 
 public class InfoLoader {
     public static String USER_DATA_FILE_NAME = "currentUser";

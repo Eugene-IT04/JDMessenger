@@ -12,8 +12,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jdcompany.jdmessenger.R;
-import com.jdcompany.jdmessenger.data.Message;
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.objects.Message;
+import com.jdcompany.jdmessenger.data.objects.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     }
 
     public void setUsersCollection(List<User> data){
-        this.data = data;;
+        this.data = data;
         notifyDataSetChanged();
     }
 

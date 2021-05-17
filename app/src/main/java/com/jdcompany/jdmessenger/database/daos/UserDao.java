@@ -1,11 +1,11 @@
-package com.jdcompany.jdmessenger.database;
+package com.jdcompany.jdmessenger.database.daos;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.jdcompany.jdmessenger.data.User;
+import com.jdcompany.jdmessenger.data.objects.User;
 
 import java.util.List;
 

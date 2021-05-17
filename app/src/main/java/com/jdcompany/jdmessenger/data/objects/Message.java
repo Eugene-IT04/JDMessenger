@@ -1,4 +1,4 @@
-package com.jdcompany.jdmessenger.data;
+package com.jdcompany.jdmessenger.data.objects;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
