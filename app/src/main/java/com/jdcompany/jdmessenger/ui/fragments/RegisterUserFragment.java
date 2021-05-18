@@ -63,7 +63,7 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
         btnSignUp.setEnabled(true);
         InfoLoader.getInstance().setCurrentUser(user);
         saveUserDataForInfoLoader(user);
-        hideKeyboard(requireActivity());
+        hideKeyboard();
         Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_registerUserFragment_to_mainScreenFragment);
     }
 
@@ -88,17 +88,6 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
             fos.close();
         } catch (Exception e) {
             showToastMessage("Failed to save data");
-        }
-    }
-
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager inputManager = (InputMethodManager) activity
-                .getSystemService(Context.INPUT_METHOD_SERVICE);
-
-        // check if no view has focus:
-        View currentFocusedView = activity.getCurrentFocus();
-        if (currentFocusedView != null) {
-            inputManager.hideSoftInputFromWindow(currentFocusedView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 }

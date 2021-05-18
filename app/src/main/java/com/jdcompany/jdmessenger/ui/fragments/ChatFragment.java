@@ -1,12 +1,15 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +34,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
     RecyclerView recyclerViewMessages;
     MessagesAdapter messagesAdapter;
     EditText etMessageText;
-    Button btnSendMessage;
+    ImageButton btnSendMessage;
 
     MessageDao messageDao;
     UserDao userDao;
@@ -67,6 +70,19 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
         if(destinationName != null)
         tvDestinationName.setText(destinationName);
         else throw new IllegalStateException("Need userName");
+        etMessageText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(s.length() > 0) btnSendMessage.setVisibility(View.VISIBLE);
+                else btnSendMessage.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+        });
 
         //get Dao-s
         userDao = AppDatabase.getInstance(getContext()).userDao();
@@ -99,7 +115,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        String string = etMessageText.getText().toString();
+        String string = etMessageText.getText().toString().trim();
         if(!string.isEmpty())
         currentChat.sendTextMessage(string, t -> showToastMessage("Failed to send message"));
         etMessageText.setText("");

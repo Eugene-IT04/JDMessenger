@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:textSize="20sp"
-            android:textColor="@color/black"
+            android:textColor="@color/background"
             android:text="All chats"/>
     </androidx.appcompat.widget.Toolbar>
 

@@ -54,8 +54,9 @@ public class FindUserFragment extends BaseFragment implements View.OnClickListen
                     compositeDisposable.add(AppDatabase.getInstance(getContext()).userDao().insert(user)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(() ->
-                            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack(),
+                            .subscribe(() ->{
+                                hideKeyboard();
+                                Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).popBackStack();},
                             e-> {
                                 Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 btnFindUser.setEnabled(true);

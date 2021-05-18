@@ -8,6 +8,7 @@ import com.jdcompany.jdmessenger.database.daos.MessageDao;
 import com.jdcompany.jdmessenger.database.daos.UserDao;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +40,12 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                 messagesToSave.add(message);
             }
             else if(messageAction.equals(MessageAction.DELETE_MESSAGE.toString())){
-                messageDao.deleteMessageById(message.getId()).subscribe();
+                Message mess = findMessageById(message.getId(), messages);
+                if(mess != null){
+                    messages.remove(mess);
+                    messagesToSave.remove(mess);
+                }
+                else messageDao.deleteMessageById(message.getId()).subscribe();
             }
             else if(messageAction.equals(MessageAction.EDIT_MESSAGE.toString())){
                 int separatorIndex = message.getBody().indexOf(" ");
@@ -47,7 +53,13 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                     try {
                         long id = Long.parseLong(message.getBody().substring(0, separatorIndex));
                         String newBody = message.getBody().substring(separatorIndex + 1);
-                        messageDao.updateMessageWithId(id, newBody).subscribe();
+
+                        Message mess = findMessageById(message.getId(), messages);
+
+                        if(mess != null){
+                            mess.setBody(newBody);
+                        }
+                        else messageDao.updateMessageWithId(id, newBody).subscribe();
                     } catch (Exception e){}
                 }
 
@@ -60,8 +72,17 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
             findUserWithId(id);
         }
 
+        idsUsersToFind.clear();
+
         //save messages in database
         messageDao.insert(messagesToSave).subscribe();
+    }
+
+    private Message findMessageById(long id, Collection<Message> collection){
+        for(Message m : collection){
+            if(m.getId().equals(id)) return m;
+        }
+        return null;
     }
 
     private boolean doesUserWithIdExist(long id){
