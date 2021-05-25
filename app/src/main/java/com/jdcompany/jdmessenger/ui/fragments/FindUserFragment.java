@@ -13,10 +13,13 @@ import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 
 import com.jdcompany.jdmessenger.R;
+import com.jdcompany.jdmessenger.data.network.IncomeMessagesChecker;
 import com.jdcompany.jdmessenger.data.network.InternetService;
 import com.jdcompany.jdmessenger.data.objects.User;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
 import com.jdcompany.jdmessenger.database.AppDatabase;
+import com.jdcompany.jdmessenger.domain.ImageConverter;
+import com.jdcompany.jdmessenger.ui.HomeActivity;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -51,6 +54,11 @@ public class FindUserFragment extends BaseFragment implements View.OnClickListen
             InternetService.getInstance().findUser(etFindUserTag.getText().toString(), new CallBackFindUser() {
                 @Override
                 public void onUserFound(User user) {
+                    if(user.getPhoto() != null && !user.getPhoto().equals("")) {
+                        ImageConverter imageConverter = new ImageConverter();
+                        String photoPath = ((HomeActivity) requireActivity()).storeImage(imageConverter.stringToBitmap(user.getPhoto()));
+                        user.setPhoto(photoPath);
+                    }
                     compositeDisposable.add(AppDatabase.getInstance(getContext()).userDao().insert(user)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())

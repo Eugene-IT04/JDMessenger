@@ -4,7 +4,9 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
+import com.google.android.play.core.install.model.UpdateAvailability;
 import com.jdcompany.jdmessenger.data.objects.User;
 
 import java.util.List;
@@ -27,5 +29,8 @@ public interface UserDao {
 
     @Delete
     Completable delete(User user);
+
+    @Update
+    Completable update(User user);
 
 }

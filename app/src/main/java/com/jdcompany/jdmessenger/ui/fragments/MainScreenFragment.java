@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -30,6 +31,7 @@ public class MainScreenFragment extends BaseFragment implements View.OnClickList
     UsersAdapter usersAdapter = new UsersAdapter();
     UserDao userDao;
     MessageDao messageDao;
+    Toolbar tbMainScreen;
 
     @Nullable
     @Override
@@ -45,12 +47,17 @@ public class MainScreenFragment extends BaseFragment implements View.OnClickList
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         registerForContextMenu(recyclerView);
 
+        tbMainScreen = view.findViewById(R.id.tbMainScreen);
+        tbMainScreen.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putBoolean("isUpdate", true);
+            Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_registerUserFragment, bundle);
+        });
         btnFindNewUser = view.findViewById(R.id.btnFindNewUser);
         btnFindNewUser.setOnClickListener(this);
 
         userDao = AppDatabase.getInstance(null).userDao();
         messageDao = AppDatabase.getInstance(null).messageDao();
-
 
         //after daos init
         createObservers();

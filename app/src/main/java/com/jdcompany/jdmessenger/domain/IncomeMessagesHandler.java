@@ -74,6 +74,9 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                     messagesToSave.add(message);
                 }
             }
+            else if(messageAction.equals(MessageAction.UPDATE_INFO.toString())){
+                updateUserWithId(Long.parseLong(message.getBody()));
+            }
         }
 
         //get unknown users' profiles
@@ -95,6 +98,7 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
     }
 
     private boolean doesUserWithIdExist(long id){
+        if (id == 0) return true;
         for(User user : knownUsers){
             if(user.getId() == id) return true;
         }
@@ -105,10 +109,32 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
         InternetService.getInstance().findUser(id, new CallBackFindUser() {
             @Override
             public void onUserFound(User user) {
+                String photoPath = storeImage.storeImage(imageConverter.stringToBitmap(user.getPhoto()));
+                user.setPhoto(photoPath);
                 compositeDisposable.add(userDao.insert(user)
                         .subscribeOn(Schedulers.io())
                         .subscribe(() -> {}, e -> {}));
             }
+
+            @Override
+            public void onUserDoesNotExist() {
+            }
+
+            @Override
+            public void onFailure() {
+            }
+        });
+    }
+
+    private void updateUserWithId(long id){
+        InternetService.getInstance().findUser(id, new CallBackFindUser() {
+            @Override
+            public void onUserFound(User user) {
+                String photoPath = storeImage.storeImage(imageConverter.stringToBitmap(user.getPhoto()));
+                user.setPhoto(photoPath);
+                compositeDisposable.add(userDao.update(user)
+                        .subscribeOn(Schedulers.io())
+                        .subscribe(() -> {}, e -> {}));}
 
             @Override
             public void onUserDoesNotExist() {

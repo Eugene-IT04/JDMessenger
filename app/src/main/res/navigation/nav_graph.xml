@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_mainScreenFragment_to_findUserFragment"
             app:destination="@id/findUserFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_registerUserFragment"
+            app:destination="@id/registerUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/findUserFragment"

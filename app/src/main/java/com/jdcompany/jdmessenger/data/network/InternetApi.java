@@ -25,6 +25,9 @@ interface InternetApi {
     @POST("api/users")
     Call<CallBackInfo> registerUser(@Body User user);
 
+    @POST("api/users")
+    Call<CallBackInfo> updateUser(@Body User user, @Query("update") long id);
+
     @GET("/api/users")
     Call<User> getUserById(@Query("id") long id);
 

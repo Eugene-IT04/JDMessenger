@@ -1,5 +1,6 @@
 package com.jdcompany.jdmessenger.ui.adapters;
 
+import android.net.Uri;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.objects.Message;
 import com.jdcompany.jdmessenger.data.objects.User;
+import com.jdcompany.jdmessenger.domain.MessageAction;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,12 +73,16 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User userOnPosition = data.get(position);
         holder.tvUserName.setText(userOnPosition.getName());
-
+        if(userOnPosition.getPhoto() != null && !userOnPosition.getPhoto().equals(""))
+            holder.ivUserPicture.setImageURI(Uri.parse(userOnPosition.getPhoto()));
         String textForLastMessage = null;
         if(lastMessages != null) {
             for (Message message : lastMessages) {
                 if (message.getFromId() == userOnPosition.getId() || message.getToId() == userOnPosition.getId()) {
-                    textForLastMessage = message.getBody();
+                    if(message.getAction().equals(MessageAction.TEXT.toString()))
+                        textForLastMessage = message.getBody();
+                    else if(message.getAction().equals(MessageAction.IMAGE.toString()))
+                        textForLastMessage = "image";
                     break;
                 }
             }

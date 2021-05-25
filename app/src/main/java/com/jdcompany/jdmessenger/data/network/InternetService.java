@@ -85,6 +85,38 @@ public class InternetService {
         });
     }
 
+    public void updateUser(@NotNull User user, CallBackRegisterUser callBackRegisterUser) {
+        user.setPublicRsa("RSA");
+        InternetApi.Manager.getInstance().updateUser(user, user.getId()).enqueue(new Callback<CallBackInfo>() {
+            @Override
+            public void onResponse(@NotNull Call<CallBackInfo> call, @NotNull Response<CallBackInfo> response) {
+                if(callBackRegisterUser != null) {
+                    CallBackInfo callBackInfo = response.body();
+                    if(callBackInfo == null || callBackInfo.getStatus().equals(ResponseStatus.FAIL.toString())){
+                        callBackRegisterUser.onFailure();
+                        return;
+                    }
+                    if (callBackInfo.getStatus().equals(ResponseStatus.SUCCESS.toString())) {
+                        user.setId(callBackInfo.getId());
+                        callBackRegisterUser.onUserRegistered(user);
+                        return;
+                    }
+                    if(callBackInfo.getStatus().equals(ResponseStatus.TAG_IS_TAKEN.toString())){
+                        callBackRegisterUser.onUserTagIsTaken();
+                        return;
+                    }
+                    callBackRegisterUser.onFailure();
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull Call<CallBackInfo> call, @NotNull Throwable t) {
+                if(callBackRegisterUser != null)
+                    callBackRegisterUser.onFailure();
+            }
+        });
+    }
+
     public void findUser(String tag, CallBackFindUser callBackFindUser){
         InternetApi.Manager.getInstance().getUserByTag(tag).enqueue(new Callback<User>() {
             @Override

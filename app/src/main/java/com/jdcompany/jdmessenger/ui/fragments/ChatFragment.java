@@ -94,7 +94,10 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if(s.length() > 0) ibSendMessage.setVisibility(View.VISIBLE);
-                else ibSendMessage.setVisibility(View.GONE);
+                else {
+                    ibSendMessage.setVisibility(View.GONE);
+                    editMessage = false;
+                }
             }
 
             @Override
