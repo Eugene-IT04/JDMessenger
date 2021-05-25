@@ -43,6 +43,8 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
     EditText etMessageText;
     ImageButton ibSendMessage;
     ImageButton ibPickImage;
+    boolean editMessage = false;
+    long editId = 0;
 
     MessageDao messageDao;
     UserDao userDao;
@@ -130,9 +132,15 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        String string = etMessageText.getText().toString().trim();
-        if(!string.isEmpty())
-        currentChat.sendTextMessage(string, callBackFailedSendMessage);
+        if(!editMessage) {
+            String string = etMessageText.getText().toString().trim();
+            if (!string.isEmpty())
+                currentChat.sendTextMessage(string, callBackFailedSendMessage);
+        }
+        else {
+            currentChat.sendEditTextMessage(etMessageText.getText().toString().trim(), editId, callBackFailedSendMessage);
+            editMessage = false;
+        }
         etMessageText.setText("");
     }
 
@@ -149,7 +157,10 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
                 currentChat.sendDeleteMessageMessage(messagesAdapter.getData().get(position).getId(), callBackFailedSendMessage);
                 break;
             case R.id.optionEditTextMessage:
-                currentChat.sendEditTextMessage("Ты пидор)", messagesAdapter.getData().get(position).getId(), callBackFailedSendMessage);
+                etMessageText.setText(messagesAdapter.getData().get(position).getBody());
+                editMessage = true;
+                editId = messagesAdapter.getData().get(position).getId();
+                break;
         }
         return super.onContextItemSelected(item);
     }

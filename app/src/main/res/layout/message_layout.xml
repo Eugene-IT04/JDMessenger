@@ -33,6 +33,7 @@
             android:id="@+id/ivMessageImage"
             android:layout_margin="5dp"
             android:maxWidth="300dp"
+            android:minWidth="270dp"
             tools:background="@drawable/ic_launcher_background"
             android:adjustViewBounds="true"
             android:scaleType="fitCenter"
