@@ -1,17 +1,19 @@
 package com.jdcompany.jdmessenger.ui.fragments;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,22 +26,30 @@ import com.jdcompany.jdmessenger.database.AppDatabase;
 import com.jdcompany.jdmessenger.database.daos.MessageDao;
 import com.jdcompany.jdmessenger.database.daos.UserDao;
 import com.jdcompany.jdmessenger.domain.Chat;
+import com.jdcompany.jdmessenger.domain.ImageConverter;
+import com.jdcompany.jdmessenger.domain.callbacks.CallBackFailedSendMessage;
+import com.jdcompany.jdmessenger.ui.HomeActivity;
 import com.jdcompany.jdmessenger.ui.adapters.MessagesAdapter;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
+
+import static android.app.Activity.RESULT_OK;
 
 public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
     RecyclerView recyclerViewMessages;
     MessagesAdapter messagesAdapter;
     EditText etMessageText;
-    ImageButton btnSendMessage;
+    ImageButton ibSendMessage;
+    ImageButton ibPickImage;
 
     MessageDao messageDao;
     UserDao userDao;
 
     Chat currentChat;
+
+    CallBackFailedSendMessage callBackFailedSendMessage = t -> showToastMessage("Failed to send message");
 
 
     @Nullable
@@ -55,12 +65,17 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
         TextView tvDestinationName = view.findViewById(R.id.tvChatName);
         recyclerViewMessages = view.findViewById(R.id.recyclerViewMessages);
         etMessageText = view.findViewById(R.id.editText);
-        btnSendMessage = view.findViewById(R.id.btnSendMessage);
+        ibSendMessage = view.findViewById(R.id.btnSendMessage);
+        ibPickImage = view.findViewById(R.id.ibPickImage);
 
         //config views
-        btnSendMessage.setEnabled(false);
-        btnSendMessage.setOnClickListener(this);
-        btnSendMessage.bringToFront();
+        ibSendMessage.setEnabled(false);
+        ibSendMessage.setOnClickListener(this);
+        ibPickImage.setOnClickListener(v -> {
+            isReadStoragePermissionGranted();
+            pickImage();
+        });
+        ibSendMessage.bringToFront();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
         linearLayoutManager.setReverseLayout(true);
         messagesAdapter = new MessagesAdapter();
@@ -76,8 +91,8 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if(s.length() > 0) btnSendMessage.setVisibility(View.VISIBLE);
-                else btnSendMessage.setVisibility(View.GONE);
+                if(s.length() > 0) ibSendMessage.setVisibility(View.VISIBLE);
+                else ibSendMessage.setVisibility(View.GONE);
             }
 
             @Override
@@ -95,11 +110,11 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(user -> {
-                    currentChat = new Chat(user, messageDao);
+                    currentChat = new Chat(user, messageDao, new ImageConverter(), ((HomeActivity)requireActivity())::storeImage);
                     messagesAdapter.setChat(currentChat);
 
                     //update UI when user is loaded
-                    btnSendMessage.setEnabled(true);
+                    ibSendMessage.setEnabled(true);
                 }));
 
         //load messages from database
@@ -117,7 +132,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         String string = etMessageText.getText().toString().trim();
         if(!string.isEmpty())
-        currentChat.sendTextMessage(string, t -> showToastMessage("Failed to send message"));
+        currentChat.sendTextMessage(string, callBackFailedSendMessage);
         etMessageText.setText("");
     }
 
@@ -130,8 +145,27 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
                         .subscribeOn(Schedulers.io())
                         .subscribe();
                 break;
+            case R.id.optionDeleteMessageGlobally:
+                currentChat.sendDeleteMessageMessage(messagesAdapter.getData().get(position).getId(), callBackFailedSendMessage);
+                break;
+            case R.id.optionEditTextMessage:
+                currentChat.sendEditTextMessage("Ты пидор)", messagesAdapter.getData().get(position).getId(), callBackFailedSendMessage);
         }
         return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (resultCode != RESULT_OK) {
+            return;
+        }
+        if (requestCode == 1) {
+            try {
+                Bitmap newPhoto = MediaStore.Images.Media.getBitmap(requireActivity().getContentResolver(), data.getData());
+                if (newPhoto != null)
+                    currentChat.sendPicture(newPhoto, callBackFailedSendMessage);
+            } catch (Exception e){}
+        }
     }
 }
 

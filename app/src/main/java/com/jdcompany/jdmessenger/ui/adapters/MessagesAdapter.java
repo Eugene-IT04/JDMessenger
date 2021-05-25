@@ -1,5 +1,6 @@
 package com.jdcompany.jdmessenger.ui.adapters;
 
+import android.net.Uri;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,7 +19,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.jdcompany.jdmessenger.R;
 import com.jdcompany.jdmessenger.data.objects.Message;
 import com.jdcompany.jdmessenger.domain.Chat;
+import com.jdcompany.jdmessenger.domain.MessageAction;
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -41,7 +45,6 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     public void setPosition(int position){
         this.position = position;
     }
-
 
     public interface OnItemClickListener {
         void onUserItemClicked(Message messageModel);
@@ -77,9 +80,21 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-        holder.setText(data.get(position).getBody());
-        holder.setLeftSide(chat.isLeftSide(data.get(position)));
-        holder.tvMessageTime.setText(simpleDateFormat.format(new Date(data.get(position).getTime())));
+        Message message = data.get(position);
+        holder.setLeftSide(chat.isLeftSide(message));
+        holder.tvMessageTime.setText(simpleDateFormat.format(new Date(message.getTime())));
+
+        if(message.getAction().equals(MessageAction.TEXT.toString())) {
+            holder.setText(data.get(position).getBody());
+            holder.ivMessageImage.setVisibility(View.GONE);
+            //holder.tvMessage.setVisibility(View.VISIBLE);
+        }
+        else if(message.getAction().equals(MessageAction.IMAGE.toString())){
+            holder.setText("");
+            holder.ivMessageImage.setImageURI(Uri.parse(message.getBody()));
+            holder.ivMessageImage.setVisibility(View.VISIBLE);
+            //holder.tvMessage.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnLongClickListener(v -> {
             setPosition(holder.getAdapterPosition());
@@ -100,6 +115,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
     static class MessageViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener{
         TextView tvMessage;
         TextView tvMessageTime;
+        ImageView ivMessageImage;
         ConstraintLayout clMessageContainer;
 
         public MessageViewHolder(@NonNull View itemView) {
@@ -107,6 +123,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
             tvMessage = itemView.findViewById(R.id.tvMessage);
             tvMessageTime = itemView.findViewById(R.id.tvMessageTime);
             clMessageContainer = itemView.findViewById(R.id.flMessageContainer);
+            ivMessageImage = itemView.findViewById(R.id.ivMessageImage);
             this.itemView.setOnCreateContextMenuListener(this);
         }
 
@@ -115,7 +132,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         }
 
         void setLeftSide(boolean side) {
-            FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
+            FrameLayout.LayoutParams frameLayoutParams = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             if (side) {
                 frameLayoutParams.gravity = Gravity.LEFT;
                 clMessageContainer.setBackgroundResource(R.drawable.message_left_drawable);
@@ -132,6 +149,7 @@ public class MessagesAdapter extends RecyclerView.Adapter<MessagesAdapter.Messag
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
             menu.add(Menu.NONE, R.id.optionDeleteMessageGlobally, Menu.NONE, R.string.optionDeleteMessageGlobally);
             menu.add(Menu.NONE, R.id.optionDeleteMessageLocally, Menu.NONE, R.string.optionDeleteMessageLocally);
+            menu.add(Menu.NONE, R.id.optionEditTextMessage, Menu.NONE, R.string.optionEditText);
         }
     }
 }

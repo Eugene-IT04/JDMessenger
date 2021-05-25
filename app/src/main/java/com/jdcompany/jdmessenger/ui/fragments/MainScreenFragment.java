@@ -51,8 +51,11 @@ public class MainScreenFragment extends BaseFragment implements View.OnClickList
         userDao = AppDatabase.getInstance(null).userDao();
         messageDao = AppDatabase.getInstance(null).messageDao();
 
-        compositeDisposable = new CompositeDisposable();
+
+        //after daos init
         createObservers();
+
+        compositeDisposable = new CompositeDisposable();
 
         usersAdapter.setOnItemClickListener(userModel -> {
             Bundle bundle = new Bundle();
@@ -61,6 +64,7 @@ public class MainScreenFragment extends BaseFragment implements View.OnClickList
             Navigation.findNavController(requireActivity(), R.id.nav_host_fragment).navigate(R.id.action_mainScreenFragment_to_chatFragment, bundle);
         });
     }
+
 
     @Override
     public boolean onContextItemSelected(@NonNull MenuItem item) {

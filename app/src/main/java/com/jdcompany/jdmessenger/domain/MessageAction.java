@@ -6,6 +6,7 @@ public enum MessageAction {
     TEXT("text"),
     DELETE_MESSAGE("delete"),
     UPDATE_INFO("update"),
+    IMAGE("image"),
     EDIT_MESSAGE("edit");
 
     final private String action;

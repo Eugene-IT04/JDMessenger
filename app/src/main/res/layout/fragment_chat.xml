@@ -38,7 +38,7 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageButton
-            android:id="@+id/imageButton"
+            android:id="@+id/ibPickImage"
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_margin="10dp"
@@ -58,7 +58,7 @@
             android:layout_marginEnd="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/btnSendMessage"
-            app:layout_constraintStart_toEndOf="@+id/imageButton"
+            app:layout_constraintStart_toEndOf="@+id/ibPickImage"
             app:layout_constraintTop_toTopOf="parent">
         </EditText>
 

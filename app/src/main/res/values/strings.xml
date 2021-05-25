@@ -3,6 +3,7 @@
     <string name="message_hint">Message</string>
     <string name="optionDeleteUser">Delete user</string>
     <string name="optionClearChat">Clear char</string>
-    <string name="optionDeleteMessageGlobally">Delete message globally</string>
-    <string name="optionDeleteMessageLocally">Delete message locally</string>
+    <string name="optionDeleteMessageGlobally">Delete globally</string>
+    <string name="optionDeleteMessageLocally">Delete locally</string>
+    <string name="optionEditText">Edit</string>
 </resources>

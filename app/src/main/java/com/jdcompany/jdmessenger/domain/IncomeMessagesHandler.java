@@ -6,6 +6,7 @@ import com.jdcompany.jdmessenger.data.objects.User;
 import com.jdcompany.jdmessenger.data.callbacks.CallBackFindUser;
 import com.jdcompany.jdmessenger.database.daos.MessageDao;
 import com.jdcompany.jdmessenger.database.daos.UserDao;
+import com.jdcompany.jdmessenger.domain.callbacks.StoreImage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +24,8 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
     Set<User> knownUsers;
     Set<Long> idsUsersToFind;
     CompositeDisposable compositeDisposable;
+    StoreImage storeImage;
+    IImageConverter imageConverter;
 
     @Override
     public void handle(List<Message> messages) {
@@ -40,12 +43,13 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                 messagesToSave.add(message);
             }
             else if(messageAction.equals(MessageAction.DELETE_MESSAGE.toString())){
-                Message mess = findMessageById(message.getId(), messages);
+                long id = Long.parseLong(message.getBody());
+                Message mess = findMessageById(id, messages);
                 if(mess != null){
                     messages.remove(mess);
                     messagesToSave.remove(mess);
                 }
-                else messageDao.deleteMessageById(message.getId()).subscribe();
+                else messageDao.deleteMessageById(id).subscribe();
             }
             else if(messageAction.equals(MessageAction.EDIT_MESSAGE.toString())){
                 int separatorIndex = message.getBody().indexOf(" ");
@@ -54,7 +58,7 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                         long id = Long.parseLong(message.getBody().substring(0, separatorIndex));
                         String newBody = message.getBody().substring(separatorIndex + 1);
 
-                        Message mess = findMessageById(message.getId(), messages);
+                        Message mess = findMessageById(id, messages);
 
                         if(mess != null){
                             mess.setBody(newBody);
@@ -62,9 +66,14 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
                         else messageDao.updateMessageWithId(id, newBody).subscribe();
                     } catch (Exception e){}
                 }
-
             }
-
+            else if(messageAction.equals(MessageAction.IMAGE.toString())){
+                String photoPath = storeImage.storeImage(imageConverter.stringToBitmap(message.getBody()));
+                if(photoPath != null) {
+                    message.setBody(photoPath);
+                    messagesToSave.add(message);
+                }
+            }
         }
 
         //get unknown users' profiles
@@ -111,9 +120,11 @@ public class IncomeMessagesHandler implements IIncomeMessagesHandler {
         });
     }
 
-    public IncomeMessagesHandler(UserDao userDao, MessageDao messageDao){
+    public IncomeMessagesHandler(UserDao userDao, MessageDao messageDao, StoreImage storeImage, IImageConverter imageConverter){
         this.userDao = userDao;
         this.messageDao = messageDao;
+        this.imageConverter = imageConverter;
+        this.storeImage = storeImage;
         knownUsers = new HashSet<>();
         idsUsersToFind = new HashSet<>();
         compositeDisposable = new CompositeDisposable();

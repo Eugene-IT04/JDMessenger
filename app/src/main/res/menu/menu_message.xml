@@ -4,4 +4,6 @@
         android:title="@string/optionDeleteMessageGlobally"/>
     <item android:id="@+id/optionDeleteMessageLocally"
         android:title="@string/optionDeleteMessageLocally"/>
+    <item android:id="@+id/optionEditTextMessage"
+        android:title="@string/optionEditText"/>
 </menu>

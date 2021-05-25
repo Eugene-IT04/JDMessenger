@@ -73,10 +73,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         holder.tvUserName.setText(userOnPosition.getName());
 
         String textForLastMessage = null;
-        for(Message message : lastMessages){
-            if(message.getFromId() == userOnPosition.getId() || message.getToId() == userOnPosition.getId()){
-                textForLastMessage = message.getBody();
-                break;
+        if(lastMessages != null) {
+            for (Message message : lastMessages) {
+                if (message.getFromId() == userOnPosition.getId() || message.getToId() == userOnPosition.getId()) {
+                    textForLastMessage = message.getBody();
+                    break;
+                }
             }
         }
 
@@ -107,7 +109,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     @Override
     public int getItemCount() {
-        return data.size();
+        return data == null ? 0 : data.size();
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
