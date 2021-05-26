@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -43,6 +44,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
     EditText etMessageText;
     ImageButton ibSendMessage;
     ImageButton ibPickImage;
+    ImageView ivUserPictureInChat;
     boolean editMessage = false;
     long editId = 0;
 
@@ -69,6 +71,7 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
         etMessageText = view.findViewById(R.id.editText);
         ibSendMessage = view.findViewById(R.id.btnSendMessage);
         ibPickImage = view.findViewById(R.id.ibPickImage);
+        ivUserPictureInChat = view.findViewById(R.id.ivUserPictureInChat);
 
         //config views
         ibSendMessage.setEnabled(false);
@@ -120,6 +123,8 @@ public class ChatFragment extends BaseFragment implements View.OnClickListener {
 
                     //update UI when user is loaded
                     ibSendMessage.setEnabled(true);
+                    if(user.getPhoto() != null && !user.getPhoto().equals(""))
+                    ivUserPictureInChat.setImageURI(Uri.parse(user.getPhoto()));
                 }));
 
         //load messages from database
