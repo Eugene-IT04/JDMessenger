@@ -15,8 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +50,7 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
     boolean isUpdate = false;
     Bitmap currentPhoto;
     boolean photoChanged = false;
+    Switch swDartMode;
 
     @Nullable
     @Override
@@ -62,10 +65,13 @@ public class RegisterUserFragment extends BaseFragment implements View.OnClickLi
         etSignUpName = view.findViewById(R.id.etSignUpName);
         etSignUpTag = view.findViewById(R.id.etSignUpTag);
         ibEditUserPhoto = view.findViewById(R.id.ibEditUserPhoto);
+        swDartMode = view.findViewById(R.id.swDartMode);
+        swDartMode.setChecked(((HomeActivity)requireActivity()).getIsDarkMode());
+        swDartMode.setOnCheckedChangeListener((buttonView, isChecked) -> ((HomeActivity)requireActivity()).setAndSaveIsDarkMode(isChecked));
         ibEditUserPhoto.setOnClickListener(this::ibChoosePhotoClick);
         btnSignUp.setOnClickListener(this);
         if(getArguments() != null)
-        isUpdate = getArguments().getBoolean("isUpdate", false);
+            isUpdate = getArguments().getBoolean("isUpdate", false);
         if (isUpdate) {
             btnSignUp.setText("Update");
             TextView tvHeader = view.findViewById(R.id.tvHeader);
