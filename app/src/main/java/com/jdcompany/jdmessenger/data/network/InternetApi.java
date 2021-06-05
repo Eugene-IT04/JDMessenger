@@ -35,7 +35,7 @@ interface InternetApi {
     Call<User> getUserByTag(@Query("tag") String tag);
 
     class Manager{
-        private static final String BASE_URL = "http://34.78.104.83:8000";
+        private static final String BASE_URL = "http://3.142.181.116:8000";
         private static final InternetApi internetApi;
 
         static {

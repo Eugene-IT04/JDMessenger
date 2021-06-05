@@ -9,6 +9,19 @@
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
+
+        <item name="android:forceDarkAllowed">false</item>
+        <item name="toolBarColor">#3f83b0</item>
+        <item name="chatFragmentBackgroundColor">#ADD8E6</item>
+        <item name="fragmentsBackgroundColor">@color/white</item>
+        <item name="chatFragmentIncomeMessagesBackgroundColor">#FFFFFF</item>
+        <item name="chatFragmentOutcomeMessagesBackgroundColor">#EFFCDE</item>
+        <item name="chatFragmentMessagesTextColor">#808080</item>
+        <item name="mainFragmentUserNameColor">@color/black</item>
+        <item name="mainFragmentLineColor">@android:color/darker_gray</item>
+        <item name="findUserFragmentTextColor">@color/black</item>
+        <item name="chatFragmentEditMessageBackgroundColor">#FFFFFF</item>
+
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->

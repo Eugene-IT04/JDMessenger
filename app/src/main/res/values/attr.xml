@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <attr name="toolBarColor" format="reference|color" />
+    <attr name="fragmentsBackgroundColor" format="reference|color" />
+    <attr name="chatFragmentBackgroundColor" format="reference|color" />
+    <attr name="chatFragmentIncomeMessagesBackgroundColor" format="reference|color" />
+    <attr name="chatFragmentOutcomeMessagesBackgroundColor" format="reference|color" />
+    <attr name="chatFragmentMessagesTextColor" format="reference|color" />
+    <attr name="mainFragmentUserNameColor" format="reference|color" />
+    <attr name="mainFragmentLineColor" format="reference|color" />
+    <attr name="findUserFragmentTextColor" format="reference|color" />
+    <attr name="chatFragmentEditMessageBackgroundColor" format="reference|color" />
+
+</resources>

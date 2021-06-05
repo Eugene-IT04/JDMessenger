@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -46,6 +47,7 @@ public class MainScreenFragment extends BaseFragment implements View.OnClickList
         recyclerView.setAdapter(usersAdapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         registerForContextMenu(recyclerView);
+
 
         tbMainScreen = view.findViewById(R.id.tbMainScreen);
         tbMainScreen.setOnClickListener(v -> {

@@ -3,6 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="?attr/fragmentsBackgroundColor"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -35,7 +36,7 @@
         android:layout_marginBottom="52dp"
         android:text="Enter user's tag you want to find"
         android:textSize="20sp"
-        android:textColor="@color/black"
+        android:textColor="?attr/findUserFragmentTextColor"
         app:layout_constraintBottom_toTopOf="@+id/etFindUserTag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"

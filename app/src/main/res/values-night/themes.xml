@@ -1,15 +1,27 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.JDMessenger" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.JDMessenger" parent="@style/Theme.AppCompat.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_200</item>
-        <item name="colorPrimaryVariant">@color/dark_blue</item>
+        <item name="colorPrimaryVariant">#1a242e</item>
         <item name="colorOnPrimary">@color/black</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/teal_200</item>
         <item name="colorSecondaryVariant">@color/teal_200</item>
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
+
+        <item name="toolBarColor">#212d3b</item>
+        <item name="fragmentsBackgroundColor">#151e27</item>
+        <item name="chatFragmentBackgroundColor">#151e27</item>
+        <item name="chatFragmentIncomeMessagesBackgroundColor">#222e3a</item>
+        <item name="chatFragmentOutcomeMessagesBackgroundColor">#3b618a</item>
+        <item name="chatFragmentMessagesTextColor">#def1ff</item>
+        <item name="mainFragmentUserNameColor">@color/white</item>
+        <item name="mainFragmentLineColor">#0b1521</item>
+        <item name="findUserFragmentTextColor">@color/white</item>
+        <item name="chatFragmentEditMessageBackgroundColor">#212d3b</item>
+
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
     </style>

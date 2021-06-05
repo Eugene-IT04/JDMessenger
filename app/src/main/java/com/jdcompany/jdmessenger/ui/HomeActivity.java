@@ -1,12 +1,14 @@
 package com.jdcompany.jdmessenger.ui;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavGraph;
 import androidx.navigation.NavInflater;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -34,33 +36,62 @@ public class HomeActivity extends AppCompatActivity {
     UserDao userDao;
     IncomeMessagesHandler incomeMessagesHandler;
     IncomeMessagesChecker incomeMessagesChecker;
+    SharedPreferences preferences;
+    boolean isDarkModeNow = false;
+
+    public final static String PREF_DARK_THEME = "isDarkTheme";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        preferences = getPreferences(MODE_PRIVATE);
+        isDarkModeNow = preferences.getBoolean(PREF_DARK_THEME, false);
+        setDartMode(isDarkModeNow);
+
         messageDao = AppDatabase.getInstance(this).messageDao();
         userDao = AppDatabase.getInstance(this).userDao();
-        incomeMessagesHandler = new IncomeMessagesHandler(userDao, messageDao, this::storeImage, new ImageConverter());
 
         chooseAndStartFirstFragment();
 
+        incomeMessagesHandler = new IncomeMessagesHandler(userDao, messageDao, this::storeImage, new ImageConverter());
         incomeMessagesChecker = new IncomeMessagesChecker(incomeMessagesHandler::handle);
         incomeMessagesChecker.start();
+    }
+
+    public void setAndSaveIsDarkMode(boolean isDarkMode){
+        isDarkModeNow = isDarkMode;
+        setDartMode(isDarkMode);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PREF_DARK_THEME, isDarkMode);
+        editor.apply();
+    }
+
+    public boolean getIsDarkMode(){
+        return isDarkModeNow;
+    }
+
+    private void setDartMode(boolean isDarkMode){
+        if(isDarkMode)AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        else AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+        if(incomeMessagesChecker != null)
         incomeMessagesChecker.resume();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        if(incomeMessagesChecker != null)
         incomeMessagesChecker.pause();
     }
+
 
     private void chooseAndStartFirstFragment() {
         NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);

@@ -27,7 +27,7 @@
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:textSize="16sp"
-        android:textColor="@color/black"/>
+        android:textColor="?attr/mainFragmentUserNameColor"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -41,7 +41,7 @@
     <View
         android:layout_width="0dp"
         android:layout_height="1px"
-        android:background="@android:color/darker_gray"
+        android:background="?attr/mainFragmentLineColor"
         android:layout_marginLeft="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toRightOf="@id/ivUserPicture"
